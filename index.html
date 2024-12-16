@@ -4,127 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tijuana Tours</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(to bottom, #e0f7ff, #ffffff);
-        }
-        .navbar {
-            background-color: #003366;
-        }
-        .navbar-brand, .nav-link {
-            color: #ffffff !important;
-        }
-        footer {
-            background-color: #003366;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#"><img src="https://i.ibb.co/7KM0NtP/301903829-457167133104531-8338805562921231308-n.png" alt="Tijuana Tours" style="height: 40px;"> Tijuana Tours</a>
+            <a class="navbar-brand" href="#">
+                <img src="https://i.ibb.co/7KM0NtP/301903829-457167133104531-8338805562921231308-n.png" alt="Tijuana Tours Logo" height="50">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#quienes-somos">Quienes Somos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#ventas">Ventas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">Quiénes Somos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sales">Ventas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Quienes Somos -->
-    <section id="quienes-somos" class="py-5">
-        <div class="container text-center">
-            <h2 class="mb-4">Quienes Somos</h2>
-            <p>Tijuana Tours es tu mejor opción para explorar los mejores destinos turísticos. Ofrecemos experiencias inolvidables que combinan comodidad, aventura y excelencia.</p>
+    <!-- Hero Section -->
+    <header class="bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1 class="display-4">Bienvenidos a Tijuana Tours</h1>
+            <p class="lead">Explora los mejores destinos turísticos con nosotros</p>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <h2 class="text-center text-primary">Quiénes Somos</h2>
+            <p class="text-center">En Tijuana Tours nos especializamos en ofrecer experiencias inolvidables en los destinos más emblemáticos de México y más allá.</p>
         </div>
     </section>
 
-    <!-- Ventas -->
-    <section id="ventas" class="py-5 bg-light">
+    <!-- Sales Section -->
+    <section id="sales" class="py-5 bg-light">
         <div class="container">
-            <h2 class="mb-4 text-center">Ventas</h2>
-            <div class="accordion" id="ventasAccordion">
-
+            <h2 class="text-center text-primary">Ventas</h2>
+            <div class="accordion" id="salesAccordion">
                 <!-- Tours Locales -->
                 <div class="accordion-item">
-                    <h3 class="accordion-header" id="localesHeader">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#locales" aria-expanded="true" aria-controls="locales">
+                    <h2 class="accordion-header" id="localToursHeading">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#localTours" aria-expanded="true" aria-controls="localTours">
                             Tours Locales
                         </button>
-                    </h3>
-                    <div id="locales" class="accordion-collapse collapse show" aria-labelledby="localesHeader">
+                    </h2>
+                    <div id="localTours" class="accordion-collapse collapse show" aria-labelledby="localToursHeading" data-bs-parent="#salesAccordion">
                         <div class="accordion-body">
-                            <div id="carouselLocales" class="carousel slide" data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                    <div class="carousel-item active">
-                                        <img src="ruta_del_vino.jpg" class="d-block w-100" alt="Ruta del Vino + Ensenada">
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h5>Ruta del Vino + Ensenada</h5>
-                                            <p>Explora la belleza de los viñedos y las playas de Ensenada.</p>
-                                        </div>
-                                    </div>
-                                    <div class="carousel-item">
-                                        <img src="ruta_langosta.jpg" class="d-block w-100" alt="Ruta del Vino + Langosta en Puerto Nuevo">
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h5>Ruta del Vino + Langosta en Puerto Nuevo</h5>
-                                            <p>Disfruta de una experiencia gastronómica inolvidable.</p>
-                                        </div>
-                                    </div>
-                                    <div class="carousel-item">
-                                        <img src="ruta_vip.jpg" class="d-block w-100" alt="Ruta del Vino VIP">
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h5>Ruta del Vino VIP</h5>
-                                            <p>Un tour exclusivo para los amantes del vino.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselLocales" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Anterior</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#carouselLocales" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Siguiente</span>
-                                </button>
-                            </div>
+                            <ul>
+                                <li>Ruta del vino + Ensenada</li>
+                                <li>Ruta del vino + Langosta en Puerto Nuevo</li>
+                                <li>Ruta del vino VIP</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tours Playa -->
                 <div class="accordion-item">
-                    <h3 class="accordion-header" id="playaHeader">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#playa" aria-expanded="false" aria-controls="playa">
+                    <h2 class="accordion-header" id="beachToursHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beachTours" aria-expanded="false" aria-controls="beachTours">
                             Tours Playa
                         </button>
-                    </h3>
-                    <div id="playa" class="accordion-collapse collapse" aria-labelledby="playaHeader">
+                    </h2>
+                    <div id="beachTours" class="accordion-collapse collapse" aria-labelledby="beachToursHeading" data-bs-parent="#salesAccordion">
                         <div class="accordion-body">
-                            <p>Puedes visitar Puerto Peñasco y Puerto Vallarta, ¡descubre las mejores playas!</p>
+                            <ul>
+                                <li>Puerto Peñasco</li>
+                                <li>Puerto Vallarta</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tours USA -->
                 <div class="accordion-item">
-                    <h3 class="accordion-header" id="usaHeader">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#usa" aria-expanded="false" aria-controls="usa">
+                    <h2 class="accordion-header" id="usaToursHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#usaTours" aria-expanded="false" aria-controls="usaTours">
                             Tours USA
                         </button>
-                    </h3>
-                    <div id="usa" class="accordion-collapse collapse" aria-labelledby="usaHeader">
+                    </h2>
+                    <div id="usaTours" class="accordion-collapse collapse" aria-labelledby="usaToursHeading" data-bs-parent="#salesAccordion">
                         <div class="accordion-body">
-                            <p>¡Próximamente más información!</p>
+                            Próximamente
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tours en Puerta -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="doorstepToursHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#doorstepTours" aria-expanded="false" aria-controls="doorstepTours">
+                            Tours en Puerta
+                        </button>
+                    </h2>
+                    <div id="doorstepTours" class="accordion-collapse collapse" aria-labelledby="doorstepToursHeading" data-bs-parent="#salesAccordion">
+                        <div class="accordion-body">
+                            <ul>
+                                <li>Tren Chepe</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -132,5 +118,46 @@
         </div>
     </section>
 
+    <!-- Contact Section -->
+    <section id="contact" class="py-5">
+        <div class="container">
+            <h2 class="text-center text-primary">Contacto</h2>
+            <form action="mailto:ruizgarciafatimadejesus@gmail.com" method="post" enctype="text/plain">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Teléfono</label>
+                    <input type="tel" class="form-control" id="phone" name="phone">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Duda</label>
+                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">¿Te gustaría que te contactáramos por?</label>
+                    <div>
+                        <input type="checkbox" id="contactEmail" name="contactPreference" value="email">
+                        <label for="contactEmail">Correo</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="contactWhatsapp" name="contactPreference" value="whatsapp">
+                        <label for="contactWhatsapp">WhatsApp</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p class="mb-0">&copy; 2024 Tijuana Tours. Todos los derechos reservados.</p>
+    </footer>
 </body>
 </html>
