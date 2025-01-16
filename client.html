@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión de Pagos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #565e64;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-custom {
+            border-radius: 30px;
+            font-weight: bold;
+        }
+        .btn-icon {
+            background-color: #007bff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-icon:hover {
+            background-color: #0056b3;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 100px;
+        }
+        .note {
+            font-size: 14px;
+            color: #555;
+        }
+        .instructions {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .table-bordered {
+            border: 2px solid #007bff;
+        }
+        .table-bordered th, .table-bordered td {
+            border: 2px solid #007bff;
+        }
+        .table th {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+        }
+        .table td {
+            text-align: center;
+        }
+        .info-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .icon-ticket {
+            cursor: pointer;
+            color: #007bff;
+        }
+        .icon-ticket:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="form-container position-relative">
+            <img src="https://i.ibb.co/HChTyqN/OIP.jpg" alt="Logo" class="logo">
+            <h1>Revisión de Pagos y Obtención de Ticket</h1>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p>Hola gente bonita, en este sitio podrás:</p>
+                    <ul class="instructions">
+                        <li>Visualizar los pagos que vas generando.</li>
+                        <li>Tener conocimiento de tu liquidación y los pagos restantes.</li>
+                        <li>Contactar a tu vendedora si te falta algún pago.</li>
+                        <li>Descargar el ticket final de tu reservación una vez liquidado.</li>
+                    </ul>
+                    <p class="note">Es importante bajarlo y guardarlo, ya que es el que presentarás al abordar la unidad.</p>
+                </div>
+            </div>
+            <form>
+                <div class="row mb-3">
+                    <div class="col-12 col-md-6">
+                        <label for="tourSeleccionado" class="form-label">Selecciona Tour</label>
+                        <select class="form-select" id="tourSeleccionado">
+                            <option value="">Selecciona un tour</option>
+                            <option value="tour1">Tour 1</option>
+                            <option value="tour2">Tour 2</option>
+                            <option value="tour3">Tour 3</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="nombreSeleccionado" class="form-label">Selecciona tu nombre</label>
+                        <select class="form-select" id="nombreSeleccionado">
+                            <option value="">Selecciona tu nombre</option>
+                            <option value="nombre1">Juan Pérez</option>
+                            <option value="nombre2">María López</option>
+                            <option value="nombre3">Luis García</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Tour</th>
+                                <th>Fecha del Tour</th>
+                                <th>Pago # </th>
+                                <th>Cantidad</th>
+                                <th>Ticket</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fatima Ruiz</td>
+                                <td>Ruta del Vino + Ensenada</td>
+                                <td>16 de Enero de 2025</td>
+                                <td>1</td>
+                                <td>$1000</td>
+                                <td>
+                                    <span class="icon-ticket" title="Ver recibo">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-receipt" viewBox="0 0 16 16">
+                                            <path d="M8.5.134a.5.5 0 0 1 .5.5v1.14a.5.5 0 0 1-.5.5H7a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-11a1 1 0 0 0-1-1h-.5a.5.5 0 0 1-.5-.5v-1.14a.5.5 0 0 1 .5-.5H9z"/>
+                                            <path d="M2.5 1h1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-13A.5.5 0 0 1 2.5 1zm10 0h1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 .5-.5z"/>
+                                        </svg>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" class="btn btn-icon" title="Generar otro abono">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-cash" viewBox="0 0 16 16">
+                            <path d="M15 4a1 1 0 0 1 1 1v1h-2V5a1 1 0 0 1 1-1zM0 5a1 1 0 0 1 1-1h1v2H1V5zM1 9v-1h2v2H1a1 1 0 0 1-1-1zm14 1a1 1 0 0 0 1-1V8h-2v2h1z"/>
+                            <path d="M13 5H3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zM3 6h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/>
+                            <path d="M8 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="btn btn-success btn-custom">Descargar Ticket de Liquidación</button>
+                </div>
+            </form>
+            <button type="button" class="btn btn-secondary btn-custom info-button" title="Reportar error">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
+                    <path d="M7.002 11a1 1 0 1 1 2.002 0 1 1 0 0 1-2.002 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 4.67a.553.553 0 0 1-1.1 0l-.35-4.67z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
