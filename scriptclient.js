@@ -101,8 +101,7 @@
         }
 
 
-
-
+        // Función para mostrar la tabla con los datos de pagos
         // Función para mostrar la tabla con los datos de pagos
         async function mostrarTabla() {
             const tourSeleccionado = document.getElementById('tourSeleccionado').value;
@@ -128,21 +127,35 @@
                 tablaBody.innerHTML = '';
 
                 pagos.forEach((row, index) => {
-           const tr = document.createElement('tr');
-           tr.innerHTML = `
-               <td>${row[0]}</td>
-               <td>${row[1]}</td>
-               <td>${row[2]}</td>
-               <td>${index + 1}</td>
-               <td>${row[4]}</td>
-               <td><span style="color: blue; text-decoration: underline; cursor: pointer;" onclick="verTicket('${row[5]}')">Ver Ticket</span></td>
-           `;
-           tablaBody.appendChild(tr);
-       });
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row[0]}</td>
+                        <td>${row[1]}</td>
+                        <td>${row[2]}</td>
+                        <td>${index + 1}</td>
+                        <td>${row[4]}</td>
+                        <td><span style="color: blue; text-decoration: underline; cursor: pointer;" onclick="verTicket('${row[5]}')">Ver Ticket</span></td>
+                    `;
+                    tablaBody.appendChild(tr);
+                });
+
+                // Verificar si el cliente está liquidado
+                const clienteLiquidado = data.values.some(row => row[0] === nombreSeleccionado && row[1] === tourSeleccionado && row[3] === 'Liquidado');
+
+                // Mostrar u ocultar los botones según el estado de liquidación
+                if (clienteLiquidado) {
+                    document.getElementById('descargarTicketBtn').classList.remove('hidden');
+                    document.getElementById('realizarAbonoBtn').classList.add('hidden');
+                } else {
+                    document.getElementById('descargarTicketBtn').classList.add('hidden');
+                    document.getElementById('realizarAbonoBtn').classList.remove('hidden');
+                }
 
                 document.getElementById('tablaPagos').style.display = 'block';  // Mostrar la tabla
             }
         }
+
+
 
         // Función para mostrar el ticket en una nueva ventana emergente
         function verTicket(ticketUrl) {
