@@ -51,9 +51,13 @@
             <form id="formularioReservacion">
                 <!-- Nombre del cliente -->
                 <div class="mb-3">
-                    <label for="nombreCliente" class="form-label">Nombre del cliente</label>
-                    <input type="text" class="form-control" id="nombreCliente" placeholder="Nombre completo" required>
+                  <label for="nombreCliente" class="form-label">Nombre del cliente</label>
+                  <input list="clientes" type="text" class="form-control" id="nombreCliente" placeholder="Nombre completo" required>
+                  <datalist id="clientes">
+                    <!-- Las opciones se llenarán dinámicamente con los nombres desde Google Sheets -->
+                  </datalist>
                 </div>
+
 
                 <!-- Selecciona el tour y Fecha del tour en la misma fila -->
                 <div class="row mb-3">
