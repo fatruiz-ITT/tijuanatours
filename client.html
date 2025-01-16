@@ -7,8 +7,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        body {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Agregar iconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+     <style>
+       body {
             background-color: #f8f9fa;
             font-family: Arial, sans-serif;
         }
@@ -104,7 +110,77 @@
         .hidden {
             display: none;
         }
-    </style>
+
+        /* Hacer que el modal sea responsive */
+   .modal-dialog {
+       max-width: 600px;
+       margin: 30px auto;
+   }
+
+   .modal-body {
+       padding: 20px;
+   }
+
+   .bancoDatos {
+       margin-top: 20px;
+       padding: 15px;
+       border: 1px solid #e0e0e0;
+       border-radius: 8px;
+       background-color: #f9f9f9;
+   }
+
+   .bancoDatos h6 {
+       font-size: 18px;
+       font-weight: bold;
+   }
+
+   .bancoDatos p {
+       font-size: 16px;
+   }
+
+   .btn-sm {
+       padding: 5px 10px;
+   }
+
+   .btn-lg {
+       padding: 10px 30px;
+       font-size: 16px;
+   }
+
+   .form-group label {
+       font-weight: bold;
+   }
+
+   /* Estilos adicionales */
+   .modal-header {
+       background-color: #007bff;
+       color: white;
+       text-align: center;
+   }
+
+   .modal-body {
+       background-color: #f4f4f4;
+   }
+
+   .close {
+       font-size: 1.5rem;
+       color: white;
+   }
+
+   .btn-secondary {
+       background-color: #6c757d;
+       border: none;
+   }
+
+   .btn-info {
+       background-color: #17a2b8;
+   }
+
+   .btn-success {
+       background-color: #28a745;
+   }
+
+        </style>
 </head>
 <body>
 <div class="container py-5">
@@ -162,15 +238,99 @@
             </div>
 
             <!-- Botones debajo de la tabla -->
-            <!-- Botones debajo de la tabla -->
 <div class="d-flex justify-content-between flex-wrap mt-3">
     <!-- Botón de descargar ticket de liquidación (inicialmente oculto) -->
     <button type="button" class="btn btn-success btn-custom hidden" id="descargarTicketBtn">Descargar Ticket de Liquidación</button>
 
     <!-- Botón de realizar siguiente abono (inicialmente oculto) -->
-    <button type="button" class="btn btn-primary btn-custom hidden" id="realizarAbonoBtn">Realizar Siguiente Abono</button>
-</div>
+  <button type="button" class="btn btn-primary btn-custom hidden" id="realizarAbonoBtn" onclick="mostrarModal()">Realizar Siguiente Abono</button>
 
+  <!-- Modal para la selección de banco y datos de abono -->
+  <!-- Modal de Abono -->
+  <div class="modal fade" id="modalAbono" tabindex="-1" role="dialog" aria-labelledby="modalAbonoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="modalAbonoLabel">Selecciona tu banco y datos para el abono</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="cerrarModal()">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form id="formAbono">
+                      <div class="form-group">
+                          <label for="bancoSelect">Selecciona un banco:</label>
+                          <select class="form-control" id="bancoSelect" onchange="mostrarDatosBanco()">
+                              <option value="">Selecciona una opción</option>
+                              <option value="coppel">Coppel</option>
+                              <option value="hey">Hey banco</option>
+                              <option value="banorte">Banorte</option>
+                              <option value="hsbc">HSBC</option>
+                              <option value="paypal">Banco Americano</option>
+                          </select>
+                      </div>
+
+                      <!-- Datos dinámicos de los bancos -->
+                      <div id="datosBanco" class="bancoDatos" style="display:none;">
+                          <!-- Datos Coppel -->
+                          <div id="datosCoppel" style="display:none;">
+                              <h6><i class="fas fa-university"></i> Banco: Coppel</h6>
+                              <p><strong>Tarjeta:</strong> 4112-2345-2345-2345 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <p><strong>Propietario:</strong> Socorro Garcia <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                          </div>
+
+                          <!-- Datos Hey Banco -->
+                          <div id="datosHey" style="display:none;">
+                              <h6><i class="fas fa-university"></i> Banco: Hey Banco</h6>
+                              <p><strong>Tarjeta:</strong> 4112-2345-2345-2345 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <p><strong>Propietario:</strong> Socorro Garcia <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                          </div>
+
+                          <!-- Datos Banorte -->
+                          <div id="datosBanorte" style="display:none;">
+                              <h6><i class="fas fa-university"></i> Banco: Banorte</h6>
+                              <p><strong>Tarjeta:</strong> 4112-2345-2345-2345 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <p><strong>Propietario:</strong> Socorro Garcia <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                          </div>
+
+                          <!-- Datos HSBC -->
+                          <div id="datosHsbc" style="display:none;">
+                              <h6><i class="fas fa-university"></i> Banco: HSBC</h6>
+                              <p><strong>Tarjeta:</strong> 4112-2345-2345-2345 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <p><strong>Propietario:</strong> Socorro Garcia <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                          </div>
+
+                          <!-- Datos PayPal -->
+                          <div id="datosPaypal" style="display:none;">
+                            <h6><i class="fas fa-university"></i> Banco: Arcus</h6>
+                              <p><strong>Las transferencias puede ser en DLLS o Pesos</strong></p>
+                                <p>Tipo de cambio 20 pesos por dollar</p>
+                            <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                            <p><strong>Propietario:</strong> Fatima Ruiz <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                        </div>
+
+
+                              <label for="concepto">Favor de colocar en motivo o concepto, su nombre (Ejemplo: Socorro Garcia):</label>
+
+                      </div>
+
+
+                      <!-- Botones -->
+                      <div class="mt-3">
+                          <button type="button" class="btn btn-success" onclick="enviarRecibo()">Enviar Recibo</button>
+                          <button type="button" class="btn btn-info" onclick="imprimirDatos()">Imprimir Datos</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  </div>
 
 
 
