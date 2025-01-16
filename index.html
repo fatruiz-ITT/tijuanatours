@@ -3,161 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tijuana Tours</title>
+    <title>Registro de Reservaciones</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" defer></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 100px;
+        }
+        /* Aumentar el tamaño de los checkboxes */
+        .form-check-input {
+            width: 1.5em;
+            height: 1.5em;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="https://i.ibb.co/7KM0NtP/301903829-457167133104531-8338805562921231308-n.png" alt="Tijuana Tours Logo" height="50">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#about">Quiénes Somos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#sales">Ventas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div class="container py-5">
+        <div class="form-container">
+            <img src="https://i.ibb.co/HChTyqN/OIP.jpg" alt="Logo" class="logo">
+            <h1>Registro de Reservación</h1>
+            <p class="text-center">Favor de llenar toda la información requerida.</p>
+            <form id="formularioReservacion">
+                <!-- Nombre del cliente -->
+                <div class="mb-3">
+                    <label for="nombreCliente" class="form-label">Nombre del cliente</label>
+                    <input type="text" class="form-control" id="nombreCliente" placeholder="Nombre completo" required>
+                </div>
 
-    <!-- Hero Section -->
-    <header class="bg-primary text-white text-center py-5">
-        <div class="container">
-            <h1 class="display-4">Bienvenidos a Tijuana Tours</h1>
-            <p class="lead">Explora los mejores destinos turísticos con nosotros</p>
-        </div>
-    </header>
+                <!-- Selecciona el tour y Fecha del tour en la misma fila -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="tourSeleccionado" class="form-label">Selecciona el tour</label>
+                        <select class="form-select" id="tourSeleccionado" required>
+                            <option value="">Selecciona un tour</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="fechaTour" class="form-label">Fecha del tour</label>
+                        <input type="date" class="form-control" id="fechaTour" required>
+                    </div>
+                </div>
 
-    <!-- About Section -->
-    <section id="about" class="py-5">
-        <div class="container">
-            <h2 class="text-center text-primary">Quiénes Somos</h2>
-            <p class="text-center">En Tijuana Tours nos especializamos en ofrecer experiencias inolvidables en los destinos más emblemáticos de México y más allá.</p>
-        </div>
-    </section>
-
-    <!-- Sales Section -->
-    <section id="sales" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center text-primary">Ventas</h2>
-            <div class="accordion" id="salesAccordion">
-                <!-- Tours Locales -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="localToursHeading">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#localTours" aria-expanded="true" aria-controls="localTours">
-                            Tours Locales
-                        </button>
-                    </h2>
-                    <div id="localTours" class="accordion-collapse collapse show" aria-labelledby="localToursHeading" data-bs-parent="#salesAccordion">
-                        <div class="accordion-body">
-                            <ul>
-                                <li>Ruta del vino + Ensenada</li>
-                                <li>Ruta del vino + Langosta en Puerto Nuevo</li>
-                                <li>Ruta del vino VIP</li>
-                            </ul>
+                <!-- Confirmación Abono / Liquidado y Cantidad en la misma fila -->
+                <div class="row mb-3 align-items-center">
+                    <div class="col-md-6">
+                        <label class="form-label">Confirma si es abono o liquidado:</label>
+                        <div class="d-flex">
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="abono" name="pago">
+                                <label class="form-check-label" for="abono">Abono</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="liquidado" name="pago">
+                                <label class="form-check-label" for="liquidado">Liquidado</label>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Tours Playa -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="beachToursHeading">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beachTours" aria-expanded="false" aria-controls="beachTours">
-                            Tours Playa
-                        </button>
-                    </h2>
-                    <div id="beachTours" class="accordion-collapse collapse" aria-labelledby="beachToursHeading" data-bs-parent="#salesAccordion">
-                        <div class="accordion-body">
-                            <ul>
-                                <li>Puerto Peñasco</li>
-                                <li>Puerto Vallarta</li>
-                            </ul>
-                        </div>
+                    <div class="col-md-6">
+                        <label for="cantidadReserva" class="form-label">Cantidad con la que reservó</label>
+                        <input type="number" class="form-control" id="cantidadReserva" placeholder="Cantidad en MXN" required>
                     </div>
                 </div>
 
-                <!-- Tours USA -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="usaToursHeading">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#usaTours" aria-expanded="false" aria-controls="usaTours">
-                            Tours USA
-                        </button>
-                    </h2>
-                    <div id="usaTours" class="accordion-collapse collapse" aria-labelledby="usaToursHeading" data-bs-parent="#salesAccordion">
-                        <div class="accordion-body">
-                            Próximamente
-                        </div>
-                    </div>
+                <!-- Ticket o evidencia -->
+                <div class="mb-3">
+                    <label for="evidenciaDeposito" class="form-label">Ticket o evidencia del depósito</label>
+                    <input type="file" class="form-control" id="evidenciaDeposito" required>
                 </div>
 
-                <!-- Tours en Puerta -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="doorstepToursHeading">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#doorstepTours" aria-expanded="false" aria-controls="doorstepTours">
-                            Tours en Puerta
-                        </button>
-                    </h2>
-                    <div id="doorstepTours" class="accordion-collapse collapse" aria-labelledby="doorstepToursHeading" data-bs-parent="#salesAccordion">
-                        <div class="accordion-body">
-                            <ul>
-                                <li>Tren Chepe</li>
-                            </ul>
-                        </div>
-                    </div>
+                <!-- Botón -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Registrar Reservación</button>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-5">
-        <div class="container">
-            <h2 class="text-center text-primary">Contacto</h2>
-            <form action="mailto:ruizgarciafatimadejesus@gmail.com" method="post" enctype="text/plain">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Correo Electrónico</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Teléfono</label>
-                    <input type="tel" class="form-control" id="phone" name="phone">
-                </div>
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-                <div class="mb-3">
-                    <label for="message" class="form-label">Duda</label>
-                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">¿Te gustaría que te contactáramos por?</label>
-                    <div>
-                        <input type="checkbox" id="contactEmail" name="contactPreference" value="email">
-                        <label for="contactEmail">Correo</label>
-                    </div>
-                    <div>
-                        <input type="checkbox" id="contactWhatsapp" name="contactPreference" value="whatsapp">
-                        <label for="contactWhatsapp">WhatsApp</label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Enviar</button>
             </form>
         </div>
-    </section>
+    </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
-        <p class="mb-0">&copy; 2024 Tijuana Tours. Todos los derechos reservados.</p>
-    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Función para renovar el token de acceso
+        async function renovarAccessToken() {
+            const clientId = '217452065709-eoi637u5kp9929b3laob6in6a6skknjv.apps.googleusercontent.com';
+            const clientSecret = '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';
+            const refreshToken = '1//04YzbTZvht8juCgYIARAAGAQSNwF-L9Ir9GmX3DjgLJnUPsgP889ElWofH2CYxZFwreBsPbLwdSpVXUNw-lsly-p8cuf0Nhje4U4';
+
+            const body = new URLSearchParams({
+                client_id: clientId,
+                client_secret: clientSecret,
+                refresh_token: refreshToken,
+                grant_type: 'refresh_token',
+            });
+
+            try {
+                const response = await fetch('https://oauth2.googleapis.com/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: body.toString(),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.access_token;
+                } else {
+                    console.error('Error al renovar el token de acceso:', await response.text());
+                    alert('No se pudo renovar el token de acceso.');
+                }
+            } catch (error) {
+                console.error('Error al renovar el token:', error);
+            }
+        }
+
+        // Función para cargar los tours desde Google Sheets
+        async function cargarTours() {
+            const accessToken = await renovarAccessToken();  // Obtener el token renovado
+            const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';
+            const sheetName = 'Tours';
+
+            // Realizar la solicitud a Google Sheets API con el token de acceso
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A:A`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            const data = await response.json();
+
+            const selectElement = document.getElementById('tourSeleccionado');
+            data.values.forEach((row, index) => {
+                if (index > 0) { // Para saltar la primera fila (encabezado)
+                    const option = document.createElement('option');
+                    option.value = row[0];
+                    option.textContent = row[0];
+                    selectElement.appendChild(option);
+                }
+            });
+        }
+
+        // Función para registrar la reservación en Google Sheets
+        async function registrarReservacion(event) {
+            event.preventDefault();  // Prevenir el comportamiento por defecto del formulario
+
+            const accessToken = await renovarAccessToken();  // Obtener el token renovado
+            const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';
+            const sheetName = 'Datos';
+
+            const nombreCliente = document.getElementById('nombreCliente').value;
+            const tourSeleccionado = document.getElementById('tourSeleccionado').value;
+            const fechaTour = new Date(document.getElementById('fechaTour').value);
+            const fechaFormateada = `${fechaTour.getDate() - 1} de ${fechaTour.toLocaleString('es-ES', { year: 'numeric' })}`;  // Formatear fecha
+            const abono = document.getElementById('abono').checked ? 'Abono' : 'Liquidado';
+            const cantidadReserva = document.getElementById('cantidadReserva').value;
+            const fechaActual = new Date().toLocaleString('es-ES');  // Fecha actual
+
+            const body = {
+                values: [
+                    [
+                        nombreCliente,
+                        tourSeleccionado,
+                        fechaFormateada,
+                        abono,
+                        cantidadReserva,
+                        'ticket-image',  // Aquí deberías agregar la lógica para almacenar la imagen
+                        fechaActual,
+                    ]
+                ]
+            };
+
+            try {
+                const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A1:G1:append`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                });
+
+                if (response.ok) {
+                    alert('Reservación registrada exitosamente.');
+                } else {
+                    console.error('Error al registrar la reservación:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error al registrar:', error);
+            }
+        }
+
+        // Llamada para cargar los tours cuando la página se haya cargado
+        window.onload = cargarTours;
+
+        // Asignar el evento al formulario
+        document.getElementById('formularioReservacion').addEventListener('submit', registrarReservacion);
+    </script>
 </body>
 </html>
