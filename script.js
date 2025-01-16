@@ -61,31 +61,63 @@
             });
         }
 
+        async function subirArchivoGoogleDrive(file) {
+          const folderId = '1t-c62OfAAxTEKYUSCPUb-gbRQRe0kWgs';  // ID de la carpeta de Google Drive
+          const accessToken = await renovarAccessToken();  // Asegúrate de obtener el token de acceso
+
+          const formData = new FormData();
+          formData.append('metadata', new Blob([JSON.stringify({
+              name: file.name,
+              parents: [folderId]  // Carpeta de destino
+          })], { type: 'application/json' }));
+          formData.append('file', file);  // El archivo a subir
+
+          try {
+              const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                  method: 'POST',
+                  headers: {
+                      'Authorization': `Bearer ${accessToken}`,
+                  },
+                  body: formData,
+              });
+
+              if (response.ok) {
+                  const data = await response.json();
+                  const fileUrl = `https://drive.google.com/file/d/${data.id}/view`;  // URL del archivo subido
+                  console.log('Archivo subido exitosamente:', fileUrl);
+                  return fileUrl;
+              } else {
+                  const errorData = await response.json();
+                  console.error('Error al subir archivo:', errorData);
+                  return null;
+              }
+          } catch (error) {
+              console.error('Error al subir archivo:', error);
+              return null;
+          }
+      }
+
         // Función para registrar la reservación en Google Sheets
         async function registrarReservacion(event) {
             event.preventDefault();  // Prevenir el comportamiento por defecto del formulario
-        
+
             const accessToken = await renovarAccessToken();  // Obtener el token renovado
-            const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';
-            const sheetName = 'Datos';
-        
+            const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';  // ID de tu hoja de cálculo
+            const sheetName = 'Datos';  // Nombre de la pestaña donde deseas almacenar los datos
+
             const nombreCliente = document.getElementById('nombreCliente').value;
             const tourSeleccionado = document.getElementById('tourSeleccionado').value;
             const fechaTour = new Date(document.getElementById('fechaTour').value);
             const fechaFormateada = `${fechaTour.getDate() - 1} de ${fechaTour.toLocaleString('es-ES', { year: 'numeric' })}`;  // Formatear fecha
             const abono = document.getElementById('abono').checked ? 'Abono' : 'Liquidado';
             const cantidadReserva = document.getElementById('cantidadReserva').value;
+            const evidenciaDeposito = document.getElementById('evidenciaDeposito').files[0];
             const fechaActual = new Date().toLocaleString('es-ES');  // Fecha actual
-        
-            const fileInput = document.getElementById('evidenciaDeposito');
-            const file = fileInput.files[0];
-        
-            // Subir el archivo a Google Drive
-            let fileUrl = '';
-            if (file) {
-                fileUrl = await subirArchivoGoogleDrive(file, accessToken);
-            }
-        
+
+            // Si se sube un archivo, se obtiene el enlace
+            const fileURL = evidenciaDeposito ? await subirArchivoGoogleDrive(evidenciaDeposito) : 'No se subió archivo';
+
+            // Crear el cuerpo de la solicitud para Google Sheets
             const body = {
                 values: [
                     [
@@ -94,13 +126,14 @@
                         fechaFormateada,
                         abono,
                         cantidadReserva,
-                        fileUrl,  // Aquí se guarda el enlace al archivo en Google Drive
+                        fileURL,  // URL al archivo subido en Drive
                         fechaActual,
                     ]
                 ]
             };
-        
+
             try {
+                // Enviar la solicitud a la API de Google Sheets
                 const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A1:G1:append?valueInputOption=USER_ENTERED`, {
                     method: 'POST',
                     headers: {
@@ -109,44 +142,51 @@
                     },
                     body: JSON.stringify(body),
                 });
-        
+
                 if (response.ok) {
                     alert('Reservación registrada exitosamente.');
                 } else {
-                    console.error('Error al registrar la reservación:', await response.text());
+                    const errorData = await response.json();
+                    console.error('Error al registrar la reservación:', errorData);
                 }
             } catch (error) {
-                console.error('Error al registrar:', error);
-            }
-        }
-        
-        // Función para subir el archivo a Google Drive
-        async function subirArchivoGoogleDrive(file, accessToken) {
-            const formData = new FormData();
-            formData.append('file', file);
-            
-            try {
-                const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    },
-                    body: formData,
-                });
-        
-                if (response.ok) {
-                    const data = await response.json();
-                    return `https://drive.google.com/file/d/${data.id}/view`;
-                } else {
-                    console.error('Error al subir el archivo a Google Drive:', await response.text());
-                    return '';
-                }
-            } catch (error) {
-                console.error('Error al subir archivo:', error);
-                return '';
+                console.error('Error al registrar la reservación:', error);
             }
         }
 
+        // Función para cargar los nombres desde Google Sheets y llenar el datalist
+        async function cargarNombres() {
+            const accessToken = await renovarAccessToken();  // Obtener el token renovado
+            const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';  // ID de tu hoja de cálculo
+            const sheetName = 'Datos';  // Nombre de la pestaña donde están los nombres
+
+            // Realizar la solicitud a Google Sheets API con el token de acceso
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A:A`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            const data = await response.json();
+            const datalist = document.getElementById('clientes');
+            datalist.innerHTML = '';  // Limpiar las opciones previas
+
+            // Recorrer los datos y agregar opciones al datalist
+            if (data.values) {
+                data.values.forEach(row => {
+                    const option = document.createElement('option');
+                    option.value = row[0];  // El nombre de la columna A (nombre del cliente)
+                    datalist.appendChild(option);
+                });
+            }
+        }
+
+        // Llamada para cargar los nombres cuando la página se haya cargado
+        window.onload = function() {
+            cargarTours();  // Cargar tours
+            cargarNombres();  // Cargar nombres de clientes
+        };
 
         // Llamada para cargar los tours cuando la página se haya cargado
         window.onload = cargarTours;
