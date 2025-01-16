@@ -169,3 +169,67 @@
         window.onload = function () {
             cargarTours();
         };
+
+
+//555555555555555555555555555555555555555555555555555555555555555555555
+// Función para mostrar el modal de abono
+function mostrarModal() {
+    $('#modalAbono').modal('show');
+}
+
+// Función para mostrar los datos del banco según la selección
+function mostrarDatosBanco() {
+    const bancoSeleccionado = document.getElementById('bancoSelect').value;
+
+    // Ocultar todos los datos de los bancos
+    const bancos = document.querySelectorAll('.bancoDatos > div');
+    bancos.forEach(banco => banco.style.display = 'none');
+
+    // Mostrar los datos del banco seleccionado
+    if (bancoSeleccionado) {
+        document.getElementById('datosBanco').style.display = 'block';
+        document.getElementById('datos' + bancoSeleccionado.charAt(0).toUpperCase() + bancoSeleccionado.slice(1)).style.display = 'block';
+    } else {
+        document.getElementById('datosBanco').style.display = 'none';
+    }
+}
+
+// Función para copiar el texto al portapapeles
+function copiarTexto(texto) {
+    navigator.clipboard.writeText(texto).then(() => {
+        alert('Texto copiado al portapapeles');
+    });
+}
+
+// Función para enviar el recibo por WhatsApp
+function enviarRecibo() {
+    const nombreCliente = document.getElementById('concepto').value;
+    const mensaje = encodeURIComponent(`Hola, mi nombre es ${nombreCliente}. Aquí está mi recibo de pago.`);
+    const url = `https://wa.me/6647277107?text=${mensaje}`;
+    window.open(url, '_blank');
+}
+
+// Función para imprimir solo los datos del modal
+function imprimirDatos() {
+    const modalContent = document.querySelector('.modal-body'); // Seleccionamos solo el cuerpo del modal
+
+    // Creamos un nuevo documento de impresión
+    const printWindow = window.open('', '', 'width=800,height=600');
+
+    // Escribimos el contenido del modal en el nuevo documento
+    printWindow.document.write('<html><head><title>Imprimir Datos de Abono</title>');
+    printWindow.document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">'); // FontAwesome
+    printWindow.document.write('<style> body { font-family: Arial, sans-serif; } .modal-body { font-size: 16px; } .btn { display: none; } </style>'); // Estilos
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(modalContent.innerHTML); // Insertamos el contenido
+    printWindow.document.write('</body></html>');
+
+    // Esperamos a que el contenido se cargue y luego imprimimos
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// Función para cerrar el modal
+function cerrarModal() {
+    $('#modalAbono').modal('hide');
+}
