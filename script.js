@@ -269,16 +269,24 @@ async function validarDisponibilidad() {
         const data = await response.json();
         const filas = data.values;
         let totalAsientos = 0;
-        const reservas = [];
+        const reservas = {};
+        const clientesContados = new Set();  // Usamos un Set para asegurarnos de contar solo una vez a cada cliente
 
         filas.forEach((fila, index) => {
             if (index > 0 && fila[1] === tourSeleccionado) { // Columna B: Nombre del tour
                 const nombreCliente = fila[0]; // Columna A: Nombre del cliente
                 const cantidadAsientos = parseInt(fila[7]) || 0; // Columna H: Cantidad de asientos reservados
-                totalAsientos += cantidadAsientos;
-                reservas.push({ nombreCliente, cantidadAsientos });
+
+                // Solo contar una vez por cliente
+                if (!clientesContados.has(nombreCliente)) {
+                    reservas[nombreCliente] = cantidadAsientos;
+                    clientesContados.add(nombreCliente);
+                }
             }
         });
+
+        // Calcular el total de asientos
+        totalAsientos = Object.values(reservas).reduce((total, cantidad) => total + cantidad, 0);
 
         // Mostrar total de asientos
         document.getElementById('totalAsientos').style.display = 'block';
@@ -287,16 +295,17 @@ async function validarDisponibilidad() {
         // Mostrar la tabla
         const tbody = document.getElementById('tablaReservasBody');
         tbody.innerHTML = '';
-        reservas.forEach(reserva => {
+        for (const nombreCliente in reservas) {
             const row = document.createElement('tr');
-            row.innerHTML = `<td>${reserva.nombreCliente}</td><td>${reserva.cantidadAsientos}</td>`;
+            row.innerHTML = `<td>${nombreCliente}</td><td>${reservas[nombreCliente]}</td>`;
             tbody.appendChild(row);
-        });
+        }
         document.getElementById('tablaReservas').style.display = 'table';
     } else {
         console.error('Error al obtener datos:', await response.text());
     }
 }
+
 
 // Evento para cargar tours en el modal
 document.getElementById('modalDisponibilidad').addEventListener('show.bs.modal', cargarToursDisponibilidad);
