@@ -214,3 +214,92 @@ window.onload = function () {
 
         // Asignar el evento al formulario
         document.getElementById('formularioReservacion').addEventListener('submit', registrarReservacion);
+
+  // SECCCION MODAL PARA EL BOTON FLOTANTE
+
+  // Función para cargar los tours en el dropdown del modal
+async function cargarToursDisponibilidad() {
+    const accessToken = await renovarAccessToken();
+    const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';
+    const sheetName = 'Tours';
+
+    const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A:A`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        const dropdown = document.getElementById('tourDisponibilidad');
+        dropdown.innerHTML = '<option value="">Selecciona un tour</option>'; // Limpiar opciones previas
+
+        data.values.forEach((row, index) => {
+            if (index > 0) {
+                const option = document.createElement('option');
+                option.value = row[0];
+                option.textContent = row[0];
+                dropdown.appendChild(option);
+            }
+        });
+    }
+}
+
+// Función para mostrar la disponibilidad de asientos
+async function validarDisponibilidad() {
+    const tourSeleccionado = document.getElementById('tourDisponibilidad').value;
+    if (!tourSeleccionado) {
+        alert('Selecciona un tour.');
+        return;
+    }
+
+    const accessToken = await renovarAccessToken();
+    const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';
+    const sheetName = 'Datos';
+
+    const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A:I`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        const filas = data.values;
+        let totalAsientos = 0;
+        const reservas = [];
+
+        filas.forEach((fila, index) => {
+            if (index > 0 && fila[1] === tourSeleccionado) { // Columna B: Nombre del tour
+                const nombreCliente = fila[0]; // Columna A: Nombre del cliente
+                const cantidadAsientos = parseInt(fila[7]) || 0; // Columna H: Cantidad de asientos reservados
+                totalAsientos += cantidadAsientos;
+                reservas.push({ nombreCliente, cantidadAsientos });
+            }
+        });
+
+        // Mostrar total de asientos
+        document.getElementById('totalAsientos').style.display = 'block';
+        document.getElementById('cantidadTotal').textContent = totalAsientos;
+
+        // Mostrar la tabla
+        const tbody = document.getElementById('tablaReservasBody');
+        tbody.innerHTML = '';
+        reservas.forEach(reserva => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${reserva.nombreCliente}</td><td>${reserva.cantidadAsientos}</td>`;
+            tbody.appendChild(row);
+        });
+        document.getElementById('tablaReservas').style.display = 'table';
+    } else {
+        console.error('Error al obtener datos:', await response.text());
+    }
+}
+
+// Evento para cargar tours en el modal
+document.getElementById('modalDisponibilidad').addEventListener('show.bs.modal', cargarToursDisponibilidad);
+
+// Evento para validar disponibilidad cuando se selecciona un tour
+document.getElementById('tourDisponibilidad').addEventListener('change', validarDisponibilidad);
