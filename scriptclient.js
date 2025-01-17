@@ -183,8 +183,7 @@ function cerrarModal() {
 //66666666666666666666666666666666666666666666666666666666666666666
 
 // Función para obtener la descripción del tour desde la pestaña "Tours"
-
-
+// Función principal para mostrar la tabla
 async function mostrarTabla() {
     const tourSeleccionado = document.getElementById('tourSeleccionado').value;
     const nombreSeleccionado = document.getElementById('nombreSeleccionado').value;
@@ -193,7 +192,7 @@ async function mostrarTabla() {
         const accessToken = await renovarAccessToken();
         const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';
         const sheetName = 'Datos';
-        const toursSheetName = 'Tours';  // Nombre de la pestaña donde están los tours
+        const toursSheetName = 'Tours';
 
         // Obtener los datos de la pestaña "Datos"
         const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}?majorDimension=ROWS`, {
@@ -210,7 +209,7 @@ async function mostrarTabla() {
         const tablaBody = document.getElementById('tablaBody');
         tablaBody.innerHTML = '';
 
-        let totalCantidad = 0;  // Sumar todas las cantidades
+        let totalCantidad = 0;
 
         pagos.forEach((row, index) => {
             const tr = document.createElement('tr');
@@ -223,34 +222,22 @@ async function mostrarTabla() {
                 <td><span style="color: blue; text-decoration: underline; cursor: pointer;" onclick="verTicket('${row[5]}')">Ver Ticket</span></td>
             `;
             tablaBody.appendChild(tr);
-            totalCantidad += parseFloat(row[4]);  // Sumar el valor de la cantidad
+            totalCantidad += parseFloat(row[4]);
         });
 
-        // Tomar los datos de la primera fila de la tabla
-        const datosTicket = pagos[0];  // Tomamos la primera fila para los datos
-
-        // Obtener la descripción del tour
+        const datosTicket = pagos[0];
         const descripcionTour = await obtenerDescripcionTour(tourSeleccionado, toursSheetName, sheetID, accessToken);
 
         const datos = {
             nombreCliente: datosTicket[0],
             tour: datosTicket[1],
-            fecha: datosTicket[2],  // Fecha del 3er elemento
-            cantidadTotal: totalCantidad.toFixed(2),  // Total de las cantidades
-            descripcionTour: descripcionTour  // Descripción del tour
+            fecha: datosTicket[2],
+            cantidadTotal: totalCantidad.toFixed(2),
+            descripcionTour: descripcionTour
         };
 
-        // Guardar los datos en localStorage
-        localStorage.setItem('nombreCliente', datos.nombreCliente);
-        localStorage.setItem('tour', datos.tour);
-        localStorage.setItem('fecha', datos.fecha);
-        localStorage.setItem('cantidadTotal', datos.cantidadTotal);
-        localStorage.setItem('descripcionTour', datos.descripcionTour);
-
-        // Actualizar la presentación con los datos de la tabla
         await actualizarPresentacionConDatos(datos);
 
-        // Verificar si el cliente está liquidado
         const clienteLiquidado = data.values.some(row => row[0] === nombreSeleccionado && row[1] === tourSeleccionado && row[3] === 'Liquidado');
 
         if (clienteLiquidado) {
@@ -260,12 +247,10 @@ async function mostrarTabla() {
             document.getElementById('descargarTicketBtn').classList.add('hidden');
             document.getElementById('realizarAbonoBtn').classList.remove('hidden');
         }
-
-      //  document.getElementById('tablaPagos').style.display = 'block';  // Mostrar la tabla
     }
 }
 
-// Función para obtener la descripción del tour desde la pestaña "Tours"
+// Función para obtener la descripción del tour
 async function obtenerDescripcionTour(tourSeleccionado, toursSheetName, sheetID, accessToken) {
     const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${toursSheetName}?majorDimension=ROWS`, {
         method: 'GET',
@@ -277,70 +262,49 @@ async function obtenerDescripcionTour(tourSeleccionado, toursSheetName, sheetID,
     const data = await response.json();
     const tourRow = data.values.find(row => row[0] === tourSeleccionado);
 
-    // Si encontramos el tour, tomamos el dato de la columna B (índice 1)
-    if (tourRow) {
-        return tourRow[1];  // Retornar la descripción del tour desde la columna B
-    } else {
-        return 'Descripción no disponible';  // Si no encontramos el tour
-    }
+    return tourRow ? tourRow[1] : 'Descripción no disponible';
 }
 
+// Función para actualizar la presentación
 async function actualizarPresentacionConDatos(datos) {
-    const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';  // ID de tu presentación
+    const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';
     const accessToken = await renovarAccessToken();
 
     const url = `https://slides.googleapis.com/v1/presentations/${presentationId}:batchUpdate`;
 
-    // Preparar las solicitudes para reemplazar el texto completo
     const requests = [
         {
             "replaceAllText": {
-                "containsText": {
-                    "text": "CLIENTE:.*",  // Buscar 'CLIENTE:' seguido de cualquier texto
-                    "matchCase": true
-                },
-                "replaceText": `CLIENTE: ${datos.nombreCliente}`  // Reemplazar con el nuevo nombre del cliente
+                "containsText": { "text": "CLIENTE:", "matchCase": true },
+                "replaceText": `CLIENTE: ${datos.nombreCliente}`
             }
         },
         {
             "replaceAllText": {
-                "containsText": {
-                    "text": "TOUR RESERVADO:.*",  // Buscar 'TOUR RESERVADO:' seguido de cualquier texto
-                    "matchCase": true
-                },
-                "replaceText": `TOUR RESERVADO: ${datos.tour}`  // Reemplazar con el nuevo tour
+                "containsText": { "text": "TOUR RESERVADO:", "matchCase": true },
+                "replaceText": `TOUR RESERVADO: ${datos.tour}`
             }
         },
         {
             "replaceAllText": {
-                "containsText": {
-                    "text": "FECHA DEL TOUR:.*",  // Buscar 'FECHA DEL TOUR:' seguido de cualquier texto
-                    "matchCase": true
-                },
-                "replaceText": `FECHA DEL TOUR: ${datos.fecha}`  // Reemplazar con la nueva fecha
+                "containsText": { "text": "FECHA DEL TOUR:", "matchCase": true },
+                "replaceText": `FECHA DEL TOUR: ${datos.fecha}`
             }
         },
         {
             "replaceAllText": {
-                "containsText": {
-                    "text": "DESCRIPCIÓN DEL TOUR:.*",  // Buscar 'DESCRIPCIÓN DEL TOUR:' seguido de cualquier texto
-                    "matchCase": true
-                },
-                "replaceText": `DESCRIPCIÓN DEL TOUR: ${datos.descripcionTour}`  // Reemplazar con la nueva descripción
+                "containsText": { "text": "DESCRIPCIÓN DEL TOUR:", "matchCase": true },
+                "replaceText": `DESCRIPCIÓN DEL TOUR: ${datos.descripcionTour}`
             }
         },
         {
             "replaceAllText": {
-                "containsText": {
-                    "text": "TOTAL PAGADO:.*",  // Buscar 'TOTAL PAGADO:' seguido de cualquier texto
-                    "matchCase": true
-                },
-                "replaceText": `TOTAL PAGADO: $ ${datos.cantidadTotal}`  // Reemplazar con el nuevo precio
+                "containsText": { "text": "TOTAL PAGADO:", "matchCase": true },
+                "replaceText": `TOTAL PAGADO: $ ${datos.cantidadTotal}`
             }
         }
     ];
 
-    // Solicitar actualización de la presentación
     const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -350,18 +314,13 @@ async function actualizarPresentacionConDatos(datos) {
         body: JSON.stringify({ requests })
     });
 
-    const result = await response.json();
-    console.log('Resultado de la actualización de la presentación:', result);
-    if (result.error) {
-        console.error('Error al actualizar la presentación:', result.error);
-    } else {
-        console.log('Actualización exitosa');
+    if (!response.ok) {
+        console.error('Error al actualizar la presentación:', await response.json());
     }
-    return result;
 }
 
 
-// Función para descargar la presentación como PDF
+// Descargar presentación como PDF
 async function descargarPresentacionComoPDF() {
     const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';
     const accessToken = await renovarAccessToken();
@@ -375,6 +334,11 @@ async function descargarPresentacionComoPDF() {
         }
     });
 
+    if (!response.ok) {
+        console.error('Error al descargar PDF:', await response.json());
+        return;
+    }
+
     const blob = await response.blob();
     const urlBlob = URL.createObjectURL(blob);
 
@@ -384,7 +348,144 @@ async function descargarPresentacionComoPDF() {
     a.click();
 }
 
-// Este código ya está configurado para llamar a la función de descarga cuando se hace clic en el botón
-document.getElementById('descargarTicketBtn').addEventListener('click', async function() {
-    await descargarPresentacionComoPDF();  // Llamar a la función para descargar el PDF
+// Función para renovar el token de acceso utilizando el refresh token
+// Función para renovar el token de acceso utilizando el refresh token
+async function renovarAccessToken() {
+    const clientId = '217452065709-eoi637u5kp9929b3laob6in6a6skknjv.apps.googleusercontent.com';
+    const clientSecret = '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';
+    const refreshToken = '1//04YzbTZvht8juCgYIARAAGAQSNwF-L9Ir9GmX3DjgLJnUPsgP889ElWofH2CYxZFwreBsPbLwdSpVXUNw-lsly-p8cuf0Nhje4U4';
+
+    const body = new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+    });
+
+    try {
+        const response = await fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body.toString(),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.access_token;  // Retorna el nuevo token de acceso
+        } else {
+            console.error('Error al renovar el token de acceso:', await response.text());
+            alert('No se pudo renovar el token de acceso.');
+        }
+    } catch (error) {
+        console.error('Error al renovar el token:', error);
+    }
+}
+
+// Función para limpiar los textos en la presentación usando el token de acceso
+async function limpiarTextoPresentacion(presentationId, accessToken) {
+    if (!accessToken) {
+        console.error("El token de acceso es necesario.");
+        return;
+    }
+
+    // Configuración de los headers con el token de acceso
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+    };
+
+    const slideServiceUrl = `https://slides.googleapis.com/v1/presentations/${presentationId}`;
+
+    try {
+        // Obtener las diapositivas de la presentación
+        const response = await fetch(slideServiceUrl, { headers });
+
+        // Verifica el contenido de la respuesta
+        const data = await response.json();
+        console.log("Respuesta de la API:", data); // Ver la respuesta de la API
+
+        if (!data.slides) {
+            console.error("No se pudieron obtener las diapositivas");
+            return;
+        }
+
+        // Definir las claves de texto que deben ser borradas
+        const keysToDelete = [
+            'FECHA DEL TOUR: ',
+            'CLIENTE: ',
+            'TOUR RESERVADO: ',
+            'DESCRIPCIÓN DEL TOUR: ',
+            'RECIBO#: ',
+            'TOTAL PAGADO: '
+        ];
+
+        let deletedTexts = [];
+        const slides = data.slides;
+
+        // Recorremos las diapositivas
+        for (let slide of slides) {
+            console.log(`Revisando diapositiva: ${slide.objectId}`);  // Ver la diapositiva en la consola
+            // Recorremos los elementos de la diapositiva
+            for (let element of slide.pageElements) {
+                if (element.shape && element.shape.text) {
+                    // Accedemos al contenido del texto
+                    const textElements = element.shape.text.textElements;
+                    let textContent = textElements.map(te => te.textRun ? te.textRun.content : '').join('');
+                    console.log("Texto encontrado:", textContent);  // Ver el texto que se encuentra
+
+                    // Recorremos las claves de texto que necesitamos borrar
+                    for (let key of keysToDelete) {
+                        if (textContent.includes(key)) {
+                            const index = textContent.indexOf(key) + key.length;
+                            const newText = textContent.slice(0, index);  // Mantener solo la clave y borrar lo que sigue
+
+                            // Solicitud para reemplazar el texto en la presentación
+                            const requestBody = {
+                                requests: [{
+                                    replaceAllText: {
+                                        containsText: { text: textContent },
+                                        replaceText: newText,
+                                    }
+                                }]
+                            };
+
+                            // Realizar la actualización de la presentación
+                            await fetch(slideServiceUrl + ":batchUpdate", {
+                                method: 'POST',
+                                headers: headers,
+                                body: JSON.stringify(requestBody)
+                            });
+
+                            // Registrar los textos borrados
+                            deletedTexts.push(textContent.slice(index).trim());  // Borramos el texto posterior a la clave
+                        }
+                    }
+                }
+            }
+        }
+
+        // Mostrar los textos borrados en consola
+        if (deletedTexts.length === 0) {
+            console.log("No se borraron textos.");
+        } else {
+            console.log("Textos borrados:");
+            deletedTexts.forEach(deletedText => {
+                console.log(deletedText);  // Muestra lo que se ha borrado
+            });
+        }
+    } catch (error) {
+        console.error("Error al modificar la presentación:", error);
+    }
+}
+
+// Evento para descargar y limpiar
+document.getElementById('descargarTicketBtn').addEventListener('click', async function () {
+    await descargarPresentacionComoPDF();
+    const accessToken = await renovarAccessToken(); // Obtén el token de acceso
+    if (accessToken) {
+        const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I'; // ID de tu presentación
+        limpiarTextoPresentacion(presentationId, accessToken);
+    }
 });
