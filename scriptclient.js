@@ -183,7 +183,55 @@ function cerrarModal() {
 //66666666666666666666666666666666666666666666666666666666666666666
 
 // Función para obtener la descripción del tour desde la pestaña "Tours"
-// Función principal para mostrar la tabla
+async function verTicket(link) {
+    console.log("Enlace recibido:", link);  // Verifica el enlace
+
+    if (link) {
+        const ticketIframe = document.getElementById('ticketIframe');
+        const modalTicket = $('#modalTicket');
+
+        // Extraer el ID del archivo de Google Drive
+        const fileIdMatch = link.match(/d\/([^\/]+)/);
+        if (fileIdMatch && fileIdMatch[1]) {
+            const fileId = fileIdMatch[1];
+            const iframeUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+
+            console.log("URL del iframe generado:", iframeUrl); // Verifica el enlace del iframe
+
+             ticketIframe.src = iframeUrl;
+
+            // Usar jQuery para mostrar el modal con el ID modalTicket
+            modalTicket.modal('show');  // Abre el modal usando jQuery
+        } else {
+            alert('No se pudo extraer un ID de archivo válido de Google Drive.');
+        }
+
+        // Ejecutar la lógica para limpiar la presentación si es necesario
+        try {
+            const accessToken = await renovarAccessToken();
+            if (accessToken) {
+                const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';
+                await limpiarTextoPresentacion(presentationId, accessToken);
+            }
+        } catch (error) {
+            console.error("Error al procesar la solicitud:", error);
+            alert("Hubo un error al procesar tu solicitud. Inténtalo de nuevo.");
+        }
+    } else {
+        alert('No se encontró un enlace válido para el ticket.');
+    }
+}
+
+// Función para cerrar el modal
+function closeModal() {
+  const ticketIframe = document.getElementById('ticketIframe');
+    ticketIframe.src = ''; // Limpia el iframe
+    $('#modalTicket').modal('hide'); // Cierra el modal usando jQuery
+}
+
+
+
+
 async function mostrarTabla() {
     const tourSeleccionado = document.getElementById('tourSeleccionado').value;
     const nombreSeleccionado = document.getElementById('nombreSeleccionado').value;
