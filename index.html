@@ -45,6 +45,34 @@
             width: 1.5em;
             height: 1.5em;
         }
+        .boton-flotante {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #6c757d; /* Color del botón */
+    color: #ffffff; /* Color del texto/ícono */
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    z-index: 1000;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.boton-flotante:hover {
+    background-color: #5a6268;
+    transform: scale(1.1);
+}
+
+.boton-flotante i {
+    font-size: 24px;
+}
+
     </style>
 </head>
 <body>
@@ -118,6 +146,44 @@
 
             </form>
         </div>
+        <!-- Botón flotante -->
+<button class="boton-flotante" data-bs-toggle="modal" data-bs-target="#modalDisponibilidad">
+    <i class="fas fa-chair"></i>
+</button>
+<!-- Modal -->
+<div class="modal fade" id="modalDisponibilidad" tabindex="-1" aria-labelledby="modalDisponibilidadLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDisponibilidadLabel">Validar Disponibilidad de Asientos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Dropdown para seleccionar el tour -->
+                <div class="mb-3">
+                    <label for="tourDisponibilidad" class="form-label">Selecciona un tour</label>
+                    <select class="form-select" id="tourDisponibilidad" required>
+                        <option value="">Selecciona un tour</option>
+                    </select>
+                </div>
+                <!-- Total de asientos reservados -->
+                <div id="totalAsientos" class="mb-3 text-primary fw-bold" style="display: none;">
+                    Total de asientos reservados: <span id="cantidadTotal"></span>
+                </div>
+                <!-- Tabla con los datos del tour -->
+                <table class="table table-striped mt-3" id="tablaReservas" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Nombre del cliente</th>
+                            <th>Cantidad de asientos reservados</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaReservasBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
     </div>
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
