@@ -99,88 +99,109 @@
 
         // Función para registrar la reservación en Google Sheets
         async function registrarReservacion(event) {
-            event.preventDefault();  // Prevenir el comportamiento por defecto del formulario
+    event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
-            const accessToken = await renovarAccessToken();  // Obtener el token renovado
-            const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';  // ID de tu hoja de cálculo
-            const sheetName = 'Datos';  // Nombre de la pestaña donde deseas almacenar los datos
+    const accessToken = await renovarAccessToken(); // Obtener el token renovado
+    const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g'; // ID de tu hoja de cálculo
+    const sheetName = 'Datos'; // Nombre de la pestaña donde deseas almacenar los datos
 
-            const nombreCliente = document.getElementById('nombreCliente').value;
-            const tourSeleccionado = document.getElementById('tourSeleccionado').value;
-            const fechaTour = new Date(document.getElementById('fechaTour').value);
-            const fechaFormateada = `${fechaTour.getDate() - 1} de ${fechaTour.toLocaleString('es-ES', { year: 'numeric' })}`;  // Formatear fecha
-            const abono = document.getElementById('abono').checked ? 'Abono' : 'Liquidado';
-            const cantidadReserva = document.getElementById('cantidadReserva').value;
-            const evidenciaDeposito = document.getElementById('evidenciaDeposito').files[0];
-            const fechaActual = new Date().toLocaleString('es-ES');  // Fecha actual
+    const nombreCliente = document.getElementById('nombreCliente').value;
+    const tourSeleccionado = document.getElementById('tourSeleccionado').value;
+    const fechaTour = new Date(document.getElementById('fechaTour').value);
+    const fechaFormateada = `${fechaTour.getDate()} de ${fechaTour.toLocaleString('es-ES', { month: 'long' })} de ${fechaTour.getFullYear()}`;
+    const abono = document.getElementById('abono').checked ? 'Abono' : 'Liquidado';
+    const cantidadReserva = document.getElementById('cantidadReserva').value;
+    const cantidadAsientos = document.getElementById('cantidadAsientos').value; // Nuevo dato
+    const evidenciaDeposito = document.getElementById('evidenciaDeposito').files[0];
+    const fechaActual = new Date().toLocaleString('es-ES'); // Fecha actual
 
-            // Si se sube un archivo, se obtiene el enlace
-            const fileURL = evidenciaDeposito ? await subirArchivoGoogleDrive(evidenciaDeposito) : 'No se subió archivo';
+    // Si se sube un archivo, se obtiene el enlace
+    const fileURL = evidenciaDeposito ? await subirArchivoGoogleDrive(evidenciaDeposito) : 'No se subió archivo';
 
-            // Crear el cuerpo de la solicitud para Google Sheets
-            const body = {
-                values: [
-                    [
-                        nombreCliente,
-                        tourSeleccionado,
-                        fechaFormateada,
-                        abono,
-                        cantidadReserva,
-                        fileURL,  // URL al archivo subido en Drive
-                        fechaActual,
-                    ]
-                ]
-            };
+    // Crear el cuerpo de la solicitud para Google Sheets
+    const body = {
+        values: [
+            [
+                nombreCliente,    // Columna A
+                tourSeleccionado, // Columna B
+                fechaFormateada,  // Columna C
+                abono,            // Columna D
+                cantidadReserva,  // Columna E
+                fileURL,          // Columna F
+                fechaActual,      // Columna G
+                cantidadAsientos  // Columna H (nuevo dato)
+            ]
+        ]
+    };
 
-            try {
-                // Enviar la solicitud a la API de Google Sheets
-                const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A1:G1:append?valueInputOption=USER_ENTERED`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(body),
-                });
+    try {
+        // Enviar la solicitud a la API de Google Sheets
+        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A1:H1:append?valueInputOption=USER_ENTERED`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
 
-                if (response.ok) {
-                    alert('Reservación registrada exitosamente.');
-                } else {
-                    const errorData = await response.json();
-                    console.error('Error al registrar la reservación:', errorData);
-                }
-            } catch (error) {
-                console.error('Error al registrar la reservación:', error);
-            }
+        if (response.ok) {
+            alert('Reservación registrada exitosamente.');
+        } else {
+            const errorData = await response.json();
+            console.error('Error al registrar la reservación:', errorData);
         }
+    } catch (error) {
+        console.error('Error al registrar la reservación:', error);
+    }
+}
+
 
         // Función para cargar los nombres desde Google Sheets y llenar el datalist
-        async function cargarNombres() {
-            const accessToken = await renovarAccessToken();  // Obtener el token renovado
-            const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';  // ID de tu hoja de cálculo
-            const sheetName = 'Datos';  // Nombre de la pestaña donde están los nombres
+        // Función para cargar los nombres desde Google Sheets y llenar el datalist
+async function cargarNombres() {
+    const accessToken = await renovarAccessToken(); // Obtener el token renovado
+    const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g'; // ID de la hoja de cálculo
+    const sheetName = 'Datos'; // Nombre de la pestaña donde están los nombres
 
-            // Realizar la solicitud a Google Sheets API con el token de acceso
-            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A:A`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            });
+    try {
+        // Realizar la solicitud a Google Sheets API para obtener los nombres
+        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A:A`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
 
+        if (response.ok) {
             const data = await response.json();
             const datalist = document.getElementById('clientes');
-            datalist.innerHTML = '';  // Limpiar las opciones previas
+            datalist.innerHTML = ''; // Limpiar las opciones previas
 
             // Recorrer los datos y agregar opciones al datalist
             if (data.values) {
-                data.values.forEach(row => {
-                    const option = document.createElement('option');
-                    option.value = row[0];  // El nombre de la columna A (nombre del cliente)
-                    datalist.appendChild(option);
+                data.values.forEach((row, index) => {
+                    if (index > 0) { // Saltar la fila de encabezado
+                        const option = document.createElement('option');
+                        option.value = row[0]; // El nombre del cliente está en la columna A
+                        datalist.appendChild(option);
+                    }
                 });
             }
+        } else {
+            console.error('Error al cargar nombres:', await response.text());
         }
+    } catch (error) {
+        console.error('Error al cargar nombres:', error);
+    }
+}
+
+// Llamar a cargarNombres cuando la página cargue
+window.onload = function () {
+    cargarNombres(); // Llenar el datalist con los nombres de clientes
+    cargarTours();   // Llenar la lista de tours
+};
+
 
         // Llamada para cargar los nombres cuando la página se haya cargado
         window.onload = function() {
