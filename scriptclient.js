@@ -259,15 +259,24 @@ async function mostrarTabla() {
 
         let totalCantidad = 0;
 
+        // Verificar si el cliente está liquidado
+        const clienteLiquidado = data.values.some(row => row[0] === nombreSeleccionado && row[1] === tourSeleccionado && row[3] === 'Liquidado');
+
         pagos.forEach((row, index) => {
             const tr = document.createElement('tr');
+
+            let ticketColumn = '';
+            if (!clienteLiquidado) {
+                ticketColumn = `<td><span style="color: blue; text-decoration: underline; cursor: pointer;" onclick="verTicket('${row[5]}')">Ver Ticket</span></td>`;
+            }
+
             tr.innerHTML = `
                 <td>${row[0]}</td>
                 <td>${row[1]}</td>
                 <td>${row[2]}</td>
                 <td>${index + 1}</td>
                 <td>${row[4]}</td>
-                <td><span style="color: blue; text-decoration: underline; cursor: pointer;" onclick="verTicket('${row[5]}')">Ver Ticket</span></td>
+                ${ticketColumn}
             `;
             tablaBody.appendChild(tr);
             totalCantidad += parseFloat(row[4]);
@@ -286,8 +295,7 @@ async function mostrarTabla() {
 
         await actualizarPresentacionConDatos(datos);
 
-        const clienteLiquidado = data.values.some(row => row[0] === nombreSeleccionado && row[1] === tourSeleccionado && row[3] === 'Liquidado');
-
+        // Mostrar u ocultar botones según el estado de liquidación
         if (clienteLiquidado) {
             document.getElementById('descargarTicketBtn').classList.remove('hidden');
             document.getElementById('realizarAbonoBtn').classList.add('hidden');
@@ -297,6 +305,7 @@ async function mostrarTabla() {
         }
     }
 }
+
 
 // Función para obtener la descripción del tour
 async function obtenerDescripcionTour(tourSeleccionado, toursSheetName, sheetID, accessToken) {
