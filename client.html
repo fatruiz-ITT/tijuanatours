@@ -203,8 +203,8 @@
                     <li><i class="bi bi-calendar-check"></i>Tener conocimiento de tu liquidación y los pagos restantes.</li>
                     <li><i class="bi bi-chat-dots"></i>Contactar a tu vendedora si te falta algún pago.</li>
                     <li><i class="bi bi-receipt"></i>Descargar el ticket final de tu reservación una vez liquidado.</li>
+                    <li><i class="fas fa-info-circle"></i><strong> Al liquidar tu reservacion es importante bajar y guardar el ticket, ya que es el que presentarás al abordar la unidad.</strong></li>
                 </ul>
-                <p class="text-muted mt-3">Es importante bajarlo y guardarlo, ya que es el que presentarás al abordar la unidad.</p>
             </div>
         </div>
         <!-- Formulario -->
@@ -234,7 +234,7 @@
                             <th>Tour</th>
                             <th>Fecha del Tour</th>
                             <th>Pago #</th>
-                            <th>Cantidad</th>
+                            <th>Cantidad (Abono)</th>
                             <th>Ticket</th>
                         </tr>
                     </thead>
@@ -254,9 +254,9 @@
 
     <!-- Botón de realizar siguiente abono (inicialmente oculto) -->
   <button type="button" class="btn btn-primary btn-custom hidden" id="realizarAbonoBtn" onclick="mostrarModal()">Realizar Siguiente Abono</button>
+  </div>
 
-  <!-- Modal para la selección de banco y datos de abono -->
-  <!-- Modal de Abono -->
+  <!-- Modal Abono -->
   <div class="modal fade" id="modalAbono" tabindex="-1" role="dialog" aria-labelledby="modalAbonoLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
@@ -273,9 +273,8 @@
                           <select class="form-control" id="bancoSelect" onchange="mostrarDatosBanco()">
                               <option value="">Selecciona una opción</option>
                               <option value="coppel">Coppel</option>
-                              <option value="hey">Hey banco</option>
+                              <option value="hey">Hey Banco</option>
                               <option value="banorte">Banorte</option>
-                              <option value="hsbc">HSBC</option>
                               <option value="paypal">Banco Americano</option>
                           </select>
                       </div>
@@ -285,49 +284,94 @@
                           <!-- Datos Coppel -->
                           <div id="datosCoppel" style="display:none;">
                               <h6><i class="fas fa-university"></i> Banco: Coppel</h6>
-                              <p><strong>Tarjeta:</strong> 4112-2345-2345-2345 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></p>
-                              <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
-                              <p><strong>Propietario:</strong> Socorro Garcia <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <table style="width:100%; border-collapse:collapse;">
+                                  <tr>
+                                      <td><i class="fa fa-credit-card"></i><strong> Tarjeta:</strong></td>
+                                      <td>4112-2345-2345-2345</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                                  <tr>
+                                      <td><i class="fa fa-key"></i><strong> CLABE:</strong></td>
+                                      <td>123123213213121321</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                                  <tr>
+                                      <td><i class="fa fa-female"></i><strong> Propietario:</strong></td>
+                                      <td>Socorro Garcia</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('Socorro Garcia')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                              </table>
+                              <p class="mt-2"><i class="fas fa-info-circle"></i> Favor de colocar en motivo o concepto su nombre.</p>
                           </div>
 
                           <!-- Datos Hey Banco -->
                           <div id="datosHey" style="display:none;">
-                              <h6><i class="fas fa-university"></i> Banco: Hey Banco</h6>
-                              <p><strong>Tarjeta:</strong> 4112-2345-2345-2345 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></p>
-                              <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
-                              <p><strong>Propietario:</strong> Socorro Garcia <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <h6><i class="fas fa-university"></i> Banco: BanRengio</h6>
+                              <table style="width:100%; border-collapse:collapse;">
+                                  <tr>
+                                      <td><i class="fa fa-credit-card"></i><strong> Tarjeta:</strong></td>
+                                      <td>4112-2345-2345-2345</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                                  <tr>
+                                      <td><i class="fa fa-key"></i><strong> CLABE:</strong></td>
+                                      <td>123123213213121321</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                                  <tr>
+                                      <td><i class="fa fa-female"></i><strong> Propietario:</strong></td>
+                                      <td>Socorro Garcia</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('Socorro Garcia')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                              </table>
+                              <p class="mt-2"><i class="fas fa-info-circle"></i> Favor de colocar en motivo o concepto su nombre.</p>
                           </div>
 
                           <!-- Datos Banorte -->
                           <div id="datosBanorte" style="display:none;">
                               <h6><i class="fas fa-university"></i> Banco: Banorte</h6>
-                              <p><strong>Tarjeta:</strong> 4112-2345-2345-2345 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></p>
-                              <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
-                              <p><strong>Propietario:</strong> Socorro Garcia <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
+                              <table style="width:100%; border-collapse:collapse;">
+                                  <tr>
+                                      <td><i class="fa fa-credit-card"></i><strong> Tarjeta:</strong></td>
+                                      <td>4112-2345-2345-2345</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                                  <tr>
+                                      <td><i class="fa fa-key"></i><strong> CLABE:</strong></td>
+                                      <td>123123213213121321</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                                  <tr>
+                                      <td><i class="fa fa-female"></i><strong> Propietario:</strong></td>
+                                      <td>Socorro Garcia</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('Socorro Garcia')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                              </table>
+                              <p class="mt-2"><i class="fas fa-info-circle"></i> Favor de colocar en motivo o concepto su nombre.</p>
                           </div>
 
-                          <!-- Datos HSBC -->
-                          <div id="datosHsbc" style="display:none;">
-                              <h6><i class="fas fa-university"></i> Banco: HSBC</h6>
-                              <p><strong>Tarjeta:</strong> 4112-2345-2345-2345 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('4112-2345-2345-2345')"><i class="fas fa-copy"></i> Copiar</button></p>
-                              <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
-                              <p><strong>Propietario:</strong> Socorro Garcia <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
-                          </div>
-
-                          <!-- Datos PayPal -->
+                          <!-- Datos Banco Americano -->
                           <div id="datosPaypal" style="display:none;">
-                            <h6><i class="fas fa-university"></i> Banco: Arcus</h6>
-                              <p><strong>Las transferencias puede ser en DLLS o Pesos</strong></p>
-                                <p>Tipo de cambio 20 pesos por dollar</p>
-                            <p><strong>CLABE:</strong> 123123213213121321 <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
-                            <p><strong>Propietario:</strong> Fatima Ruiz <button type="button" class="btn btn-secondary btn-sm" onclick="copiarTexto('123123213213121321')"><i class="fas fa-copy"></i> Copiar</button></p>
-                        </div>
-
-
-                              <label for="concepto">Favor de colocar en motivo o concepto, su nombre (Ejemplo: Socorro Garcia):</label>
-
+                              <h6><i class="fas fa-university"></i> Banco: Lead Bank</h6>
+                              <table style="width:100%; border-collapse:collapse;">
+                                  <tr>
+                                      <td><i class="fa fa-credit-card"></i><strong> ABA/Nro de ruta:</strong></td>
+                                      <td>101019644</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('101019644')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                                  <tr>
+                                      <td><i class="fa fa-key"></i><strong> Nro. de Cuenta:</strong></td>
+                                      <td>212975977832</td>
+                                      <td><button class="btn btn-secondary btn-sm" onclick="copiarTexto('212975977832')"><i class="fas fa-copy"></i> Copiar</button></td>
+                                  </tr>
+                                  <tr>
+                                      <td><i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i><strong> Tipo de Cuenta:</strong></td>
+                                      <td>Corriente</td>
+                                  </tr>
+                              </table>
+                              <p class="mt-2"><i class="fas fa-info-circle"></i> Favor de colocar en motivo o concepto su nombre la transferencia es en <strong>DLLS.</strong></p>
+                          </div>
                       </div>
-
 
                       <!-- Botones -->
                       <div class="mt-3">
@@ -339,9 +383,6 @@
           </div>
       </div>
   </div>
-
-  </div>
-
 
 
         </form>
