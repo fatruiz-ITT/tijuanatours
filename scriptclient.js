@@ -265,53 +265,22 @@ async function obtenerDescripcionTour(tourSeleccionado, toursSheetName, sheetID,
     return tourRow ? tourRow[1] : 'Descripción no disponible';
 }
 
-async function obtenerReciboMes(mes) {
-    // Declara correctamente el ID de la hoja de cálculo
-    const spreadsheetId = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';  // Asegúrate de que esto esté en la función
-    const range = `Recibos!${mes}2:${mes}`; // Asumiendo que los datos están en las filas a partir de la fila 2
-    const accessToken = await renovarAccessToken();
-
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`;
-
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-        }
-    });
-
-    const data = await response.json();
-
-    let reciboNumero = 1;  // Empezamos con el primer número de recibo
-    if (data.values && data.values.length > 0) {
-        // Si ya existen datos, tomamos el último recibo y le sumamos 1
-        const lastRecibo = data.values[data.values.length - 1][0];
-        const lastReciboNumero = parseInt(lastRecibo.split('-')[1], 10);
-        reciboNumero = lastReciboNumero + 1;
-    }
-
-    // Retorna el número de recibo formateado
-    return `${mes.slice(0, 1)}25-${String(reciboNumero).padStart(4, '0')}`;
-}
-
-async function actualizarPresentacionConDatos(datos) {
+async function generarrecibo() {
     const spreadsheetId = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';  // ID de tu hoja de cálculo
     const accessToken = await renovarAccessToken();  // Obtener el token de acceso
 
     // Obtener la fecha actual
     const fechaActual = new Date();
-    const mes = fechaActual.toLocaleString('default', { month: 'short' }).toUpperCase();  // Enero, Feb, Mar...
-    const mesInicial = mes === "ENE" ? "E" : mes[0];  // El primer carácter del mes
+    const mes = fechaActual.toLocaleString('default', { month: 'short' }).toUpperCase();  // Ejemplo: 'ENE'
+    const mesInicial = mes === "ENE" ? "E" : mes[0];  // Ejemplo: 'E'
 
-    // Definir la columna correspondiente al mes
+    // Determinar la columna correspondiente al mes
     let columna;
     switch (mesInicial) {
         case 'E': columna = 'A'; break; // Enero
         case 'F': columna = 'B'; break; // Febrero
         case 'M': columna = 'C'; break; // Marzo
         case 'A': columna = 'D'; break; // Abril
-        case 'M': columna = 'E'; break; // Mayo
         case 'J': columna = 'F'; break; // Junio
         case 'J': columna = 'G'; break; // Julio
         case 'A': columna = 'H'; break; // Agosto
@@ -322,24 +291,21 @@ async function actualizarPresentacionConDatos(datos) {
     }
 
     // Leer los valores actuales en la columna correspondiente
-    const range = `Recibos!${columna}2:${columna}`;  // Establecer el rango para leer los recibos
+    const range = `Recibos!${columna}2:${columna}`;
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`;
     const response = await fetch(url, {
         method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-        }
+        headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
     if (!response.ok) {
         console.error('Error al leer los recibos existentes:', await response.json());
-        return;
+        return null;
     }
 
     const data = await response.json();
     let ultimoRecibo = "E25-000";  // Valor por defecto si no hay recibos previos
 
-    // Si hay datos, obtener el último recibo registrado
     if (data.values && data.values.length > 0) {
         ultimoRecibo = data.values[data.values.length - 1][0];  // Último recibo registrado
     }
@@ -347,45 +313,44 @@ async function actualizarPresentacionConDatos(datos) {
     // Incrementar el número del recibo
     const reciboNuevo = incrementarRecibo(ultimoRecibo, mesInicial);
 
-    // Crear el cuerpo de la solicitud para Google Sheets
-    const body = {
-        values: [
-            [reciboNuevo, datos.nombreCliente, datos.tour, datos.fecha, datos.descripcionTour, datos.cantidadTotal]  // Todos los datos a guardar
-        ]
-    };
+    // Guardar el nuevo recibo en Google Sheets
+    const body = { values: [[reciboNuevo]] };
 
     try {
-        // Enviar la solicitud a la API de Google Sheets para agregar el recibo y los datos
-        const responseInsert = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Recibos!${columna}2:${columna}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
-        });
+        const responseInsert = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Recibos!${columna}2:${columna}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            }
+        );
 
         if (responseInsert.ok) {
-            alert('Número de recibo registrado exitosamente.');
+            console.log('Recibo registrado exitosamente:', reciboNuevo);
+            return reciboNuevo; // Retornar el recibo generado
         } else {
-            const errorData = await responseInsert.json();
-            console.error('Error al registrar el recibo:', errorData);
+            console.error('Error al registrar el recibo:', await responseInsert.json());
+            return null;
         }
     } catch (error) {
         console.error('Error al registrar el recibo:', error);
+        return null;
     }
+}
 
-    // Proceder con la actualización de la presentación de Google Slides
+
+async function actualizarPresentacionConDatos(datos) {
+  const accessToken = await renovarAccessToken();  // Obtener el token de acceso
+
+  // Proceder con la actualización de la presentación de Google Slides
     const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';  // ID de la presentación
     const urlSlides = `https://slides.googleapis.com/v1/presentations/${presentationId}:batchUpdate`;
 
     const requests = [
-        {
-            "replaceAllText": {
-                "containsText": { "text": "RECIBO#:", "matchCase": true },
-                "replaceText": `RECIBO#: ${reciboNuevo}`  // Reemplazamos con el nuevo número de recibo
-            }
-        },
         {
             "replaceAllText": {
                 "containsText": { "text": "CLIENTE:", "matchCase": true },
@@ -440,36 +405,65 @@ function incrementarRecibo(ultimoRecibo, mesInicial) {
     return `${prefix}-${nuevoNumero}`;  // Retornar el nuevo recibo
 }
 
-
 // Descargar presentación como PDF
-async function descargarPresentacionComoPDF() {
+async function descargarPresentacionComoPDF(reciboNuevo) {
     const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';
     const accessToken = await renovarAccessToken();
 
-    const url = `https://www.googleapis.com/drive/v3/files/${presentationId}/export?mimeType=application/pdf`;
+    // Actualizar la presentación con el número del recibo
+    const urlSlides = `https://slides.googleapis.com/v1/presentations/${presentationId}:batchUpdate`;
 
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
+    const requests = [
+        {
+            replaceAllText: {
+                containsText: { text: "RECIBO#:", matchCase: true },
+                replaceText: `RECIBO#: ${reciboNuevo}` // Reemplazamos con el nuevo número de recibo
+            }
         }
+    ];
+
+    const responseUpdate = await fetch(urlSlides, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ requests })
     });
 
-    if (!response.ok) {
-        console.error('Error al descargar PDF:', await response.json());
+    if (!responseUpdate.ok) {
+        console.error('Error al actualizar la presentación:', await responseUpdate.json());
         return;
     }
 
-    const blob = await response.blob();
+    console.log('Presentación actualizada con el recibo:', reciboNuevo);
+
+    // Mostrar mensaje de alerta
+    alert(`Tu recibo se ha generado, enseguida empezará la descarga. No olvides compartirlo por WhatsApp a Tijuana Tours`);
+
+    // Descargar el archivo como PDF
+    const url = `https://www.googleapis.com/drive/v3/files/${presentationId}/export?mimeType=application/pdf`;
+
+    const responseDownload = await fetch(url, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+
+    if (!responseDownload.ok) {
+        console.error('Error al descargar el PDF:', await responseDownload.json());
+        return;
+    }
+
+    const blob = await responseDownload.blob();
     const urlBlob = URL.createObjectURL(blob);
 
     const a = document.createElement('a');
     a.href = urlBlob;
-    a.download = 'Recibo_TijuanaTours.pdf';
+    a.download = `ReciboTijuanaTour_${reciboNuevo}.pdf`;
     a.click();
 }
 
-// Función para renovar el token de acceso utilizando el refresh token
+
 // Función para renovar el token de acceso utilizando el refresh token
 async function renovarAccessToken() {
     const clientId = '217452065709-eoi637u5kp9929b3laob6in6a6skknjv.apps.googleusercontent.com';
@@ -603,11 +597,27 @@ async function limpiarTextoPresentacion(presentationId, accessToken) {
 
 // Evento para descargar y limpiar
 document.getElementById('descargarTicketBtn').addEventListener('click', async function () {
-    await descargarPresentacionComoPDF();
-    const accessToken = await renovarAccessToken(); // Obtén el token de acceso
-    if (accessToken) {
-        const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I'; // ID de tu presentación
-        limpiarTextoPresentacion(presentationId, accessToken);
+    try {
+        const reciboNuevo = await generarrecibo();
+
+        if (!reciboNuevo) {
+            alert("Hubo un problema al generar el recibo. Inténtalo nuevamente.");
+            return;
+        }
+
+        console.log('Recibo generado:', reciboNuevo);
+
+        await descargarPresentacionComoPDF(reciboNuevo);
+
+        // Limpiar la presentación si es necesario
+        const accessToken = await renovarAccessToken();
+        if (accessToken) {
+            const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';
+            await limpiarTextoPresentacion(presentationId, accessToken);
+        }
+    } catch (error) {
+        console.error("Error al procesar la solicitud:", error);
+        alert("Hubo un error al procesar tu solicitud. Inténtalo de nuevo.");
     }
 });
 
