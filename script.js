@@ -97,67 +97,68 @@
           }
       }
 
-        // Función para registrar la reservación en Google Sheets
-        async function registrarReservacion(event) {
-    event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+      // Función para registrar la reservación en Google Sheets
+  async function registrarReservacion(event) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
-    const accessToken = await renovarAccessToken(); // Obtener el token renovado
-    const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g'; // ID de tu hoja de cálculo
-    const sheetName = 'Datos'; // Nombre de la pestaña donde deseas almacenar los datos
+      const accessToken = await renovarAccessToken(); // Obtener el token renovado
+      const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g'; // ID de tu hoja de cálculo
+      const sheetName = 'Datos'; // Nombre de la pestaña donde deseas almacenar los datos
 
-    const nombreCliente = document.getElementById('nombreCliente').value;
-    const tourSeleccionado = document.getElementById('tourSeleccionado').value;
-    const fechaTour = new Date(document.getElementById('fechaTour').value);
-    const fechaFormateada = `${fechaTour.getDate()} de ${fechaTour.toLocaleString('es-ES', { month: 'long' })} de ${fechaTour.getFullYear()}`;
-    const abono = document.getElementById('abono').checked ? 'Abono' : 'Liquidado';
-    const cantidadReserva = document.getElementById('cantidadReserva').value;
-    const cantidadAsientos = document.getElementById('cantidadAsientos').value; // Nuevo dato
-    const evidenciaDeposito = document.getElementById('evidenciaDeposito').files[0];
-    const fechaActual = new Date().toLocaleString('es-ES'); // Fecha actual
+      const nombreCliente = document.getElementById('nombreCliente').value;
+      const telefonoCliente = document.getElementById('telefonoCliente').value; // Nuevo dato
+      const tourSeleccionado = document.getElementById('tourSeleccionado').value;
+      const fechaTour = new Date(document.getElementById('fechaTour').value);
+      const fechaFormateada = `${fechaTour.getDate()} de ${fechaTour.toLocaleString('es-ES', { month: 'long' })} de ${fechaTour.getFullYear()}`;
+      const abono = document.getElementById('abono').checked ? 'Abono' : 'Liquidado';
+      const cantidadReserva = document.getElementById('cantidadReserva').value;
+      const cantidadAsientos = document.getElementById('cantidadAsientos').value;
+      const evidenciaDeposito = document.getElementById('evidenciaDeposito').files[0];
+      const fechaActual = new Date().toLocaleString('es-ES'); // Fecha actual
 
-    // Si se sube un archivo, se obtiene el enlace
-    const fileURL = evidenciaDeposito ? await subirArchivoGoogleDrive(evidenciaDeposito) : 'No se subió archivo';
+      // Si se sube un archivo, se obtiene el enlace
+      const fileURL = evidenciaDeposito ? await subirArchivoGoogleDrive(evidenciaDeposito) : 'No se subió archivo';
 
-    // Crear el cuerpo de la solicitud para Google Sheets
-    const body = {
-        values: [
-            [
-                nombreCliente,    // Columna A
-                tourSeleccionado, // Columna B
-                fechaFormateada,  // Columna C
-                abono,            // Columna D
-                cantidadReserva,  // Columna E
-                fileURL,          // Columna F
-                fechaActual,      // Columna G
-                cantidadAsientos  // Columna H (nuevo dato)
-            ]
-        ]
-    };
+      // Crear el cuerpo de la solicitud para Google Sheets
+      const body = {
+          values: [
+              [
+                  nombreCliente,    // Columna A
+                  tourSeleccionado, // Columna B
+                  fechaFormateada,  // Columna C
+                  abono,            // Columna D
+                  cantidadReserva,  // Columna E
+                  fileURL,          // Columna F
+                  fechaActual,      // Columna G
+                  cantidadAsientos, // Columna H
+                  telefonoCliente   // Columna I (nuevo dato)
+              ]
+          ]
+      };
 
-    try {
-        // Enviar la solicitud a la API de Google Sheets
-        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A1:H1:append?valueInputOption=USER_ENTERED`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
-        });
+      try {
+          // Enviar la solicitud a la API de Google Sheets
+          const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}!A1:I1:append?valueInputOption=USER_ENTERED`, {
+              method: 'POST',
+              headers: {
+                  'Authorization': `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(body),
+          });
 
-        if (response.ok) {
-            alert('Reservación registrada exitosamente.');
-        } else {
-            const errorData = await response.json();
-            console.error('Error al registrar la reservación:', errorData);
-        }
-    } catch (error) {
-        console.error('Error al registrar la reservación:', error);
-    }
-}
+          if (response.ok) {
+              alert('Reservación registrada exitosamente.');
+          } else {
+              const errorData = await response.json();
+              console.error('Error al registrar la reservación:', errorData);
+          }
+      } catch (error) {
+          console.error('Error al registrar la reservación:', error);
+      }
+  }
 
 
-        // Función para cargar los nombres desde Google Sheets y llenar el datalist
         // Función para cargar los nombres desde Google Sheets y llenar el datalist
 async function cargarNombres() {
     const accessToken = await renovarAccessToken(); // Obtener el token renovado
@@ -245,6 +246,85 @@ async function cargarToursDisponibilidad() {
         });
     }
 }
+
+// Función para cargar el nombre basado en el número de teléfono
+async function cargarDatosPorTelefono() {
+    const accessToken = await renovarAccessToken(); // Obtener el token renovado
+    const sheetID = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g'; // ID de tu hoja de cálculo
+    const sheetName = 'Datos'; // Nombre de la pestaña donde se almacenan los datos
+
+    const telefonoCliente = document.getElementById('telefonoCliente').value.trim(); // Obtener el teléfono ingresado y eliminar espacios
+
+    if (!telefonoCliente) {
+        alert('Por favor, ingresa un número de teléfono.');
+        return;
+    }
+
+    try {
+        // Obtener todos los datos de la hoja de cálculo
+        const response = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${sheetName}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`, // Token en el encabezado
+                },
+            }
+        );
+
+        if (!response.ok) {
+            console.error('Error al obtener los datos:', response.statusText);
+            alert('Error al conectar con la hoja de cálculo.');
+            return;
+        }
+
+        const data = await response.json();
+        const rows = data.values;
+
+        // Buscar el número de teléfono en la columna I
+        let foundRow = null;
+        rows.forEach(row => {
+            if (row[8] && row[8].trim() === telefonoCliente) {
+                foundRow = row;
+            }
+        });
+
+        if (foundRow) {
+            // Si se encuentra, cargar los datos en los inputs correspondientes
+            document.getElementById('nombreCliente').value = foundRow[0] || ''; // Columna A (Nombre)
+            document.getElementById('tourSeleccionado').value = foundRow[1] || ''; // Columna B (Tour seleccionado)
+            document.getElementById('cantidadAsientos').value = foundRow[7] || ''; // Columna H (Cantidad de asientos)
+
+            // Parsear la fecha y cargarla
+            const fechaTour = foundRow[6] || ''; // Columna G (Fecha del tour)
+            if (fechaTour) {
+                const [dia, mes, año] = fechaTour.split(' de ');
+                const meses = {
+                    enero: '01', febrero: '02', marzo: '03', abril: '04', mayo: '05', junio: '06',
+                    julio: '07', agosto: '08', septiembre: '09', octubre: '10', noviembre: '11', diciembre: '12'
+                };
+                const fechaFormateada = `${año}-${meses[mes.toLowerCase()]}-${dia.padStart(2, '0')}`;
+                document.getElementById('fechaTour').value = fechaFormateada; // Asignar al input tipo date
+            }
+
+            alert('Datos cargados exitosamente.');
+        } else {
+            // Si no se encuentra, limpiar los campos
+            document.getElementById('nombreCliente').value = '';
+            document.getElementById('tourSeleccionado').value = '';
+            document.getElementById('cantidadAsientos').value = '';
+            document.getElementById('fechaTour').value = '';
+            alert('El número de teléfono no está registrado.');
+        }
+    } catch (error) {
+        console.error('Error al cargar los datos:', error);
+
+    }
+}
+
+// Evento para ejecutar la función al hacer clic en el botón "Validar"
+document.getElementById('validarTelefono').addEventListener('click', cargarDatosPorTelefono);
+
 
 // Función para mostrar la disponibilidad de asientos
 async function validarDisponibilidad() {
