@@ -399,13 +399,15 @@ async function generarrecibo() {
     }
 }
 
-
 async function actualizarPresentacionConDatos(datos) {
-  const accessToken = await renovarAccessToken();  // Obtener el token de acceso
+    const accessToken = await renovarAccessToken();  // Obtener el token de acceso
 
-  // Proceder con la actualización de la presentación de Google Slides
+    // Proceder con la actualización de la presentación de Google Slides
     const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';  // ID de la presentación
     const urlSlides = `https://slides.googleapis.com/v1/presentations/${presentationId}:batchUpdate`;
+
+    // Obtener la fecha actual
+    const fechaDescarga = new Date().toISOString();  // Fecha actual en formato ISO
 
     const requests = [
         {
@@ -437,6 +439,12 @@ async function actualizarPresentacionConDatos(datos) {
                 "containsText": { "text": "TOTAL PAGADO:", "matchCase": true },
                 "replaceText": `TOTAL PAGADO: $ ${datos.cantidadTotal}`
             }
+        },
+        {
+            "replaceAllText": {
+                "containsText": { "text": "Fecha de Descargar del Recibo:", "matchCase": true },
+                "replaceText": `Fecha de Descargar del Recibo: ${fechaDescarga}`
+            }
         }
     ];
 
@@ -451,8 +459,15 @@ async function actualizarPresentacionConDatos(datos) {
 
     if (!responseSlides.ok) {
         console.error('Error al actualizar la presentación:', await responseSlides.json());
-    }
+    } 
 }
+
+// Función para generar un número de recibo único (puedes personalizarlo como prefieras)
+function generarNumeroRecibo() {
+    return Math.floor(Math.random() * 1000000);  // Genera un número aleatorio entre 0 y 999999
+}
+
+
 
 // Función para incrementar el número del recibo
 function incrementarRecibo(ultimoRecibo, mesInicial) {
@@ -590,6 +605,7 @@ async function limpiarTextoPresentacion(presentationId, accessToken) {
             'TOUR RESERVADO: ',
             'DESCRIPCIÓN DEL TOUR: ',
             'RECIBO#: ',
+            'Fecha de Descargar del Recibo: ',
             'TOTAL PAGADO: '
         ];
 
