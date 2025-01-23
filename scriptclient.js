@@ -463,28 +463,26 @@ function generarNumeroRecibo() {
     return Math.floor(Math.random() * 1000000);  // Genera un número aleatorio entre 0 y 999999
 }
 
-async function registrarRecibo(nombreCliente, numeroPDF) {
-    const spreadsheetId = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g'; // ID de tu hoja de cálculo
-    const accessToken = await renovarAccessToken(); // Obtener el token renovado
-    const sheetName = 'RecibosDescargados'; // Nombre de la pestaña donde deseas almacenar los datos
+async function registrarRecibo(nombreCliente, numeroPDF, linkPDF) {
+    const spreadsheetId = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g';
+    const accessToken = await renovarAccessToken();
+    const sheetName = 'RecibosDescargados';
 
-    // Obtener la fecha actual en formato adecuado
-    const fechaActual = new Date().toLocaleString('es-ES'); // Fecha en formato local
+    const fechaActual = new Date().toLocaleString('es-ES');
 
-    // Crear el cuerpo de la solicitud para Google Sheets
     const body = {
         values: [
             [
-                nombreCliente,    // Columna A (Nombre del cliente)
-                numeroPDF,        // Columna B (Número de PDF)
-                fechaActual       // Columna C (Fecha de descarga)
+                nombreCliente, // Columna A
+                numeroPDF,     // Columna B
+                fechaActual,   // Columna C
+                linkPDF        // Columna D
             ]
         ]
     };
 
     try {
-        // Enviar la solicitud a la API de Google Sheets
-        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!A:C:append?valueInputOption=USER_ENTERED`, {
+        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!A:D:append?valueInputOption=USER_ENTERED`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -504,6 +502,8 @@ async function registrarRecibo(nombreCliente, numeroPDF) {
     }
 }
 
+
+
 // Función para incrementar el número del recibo
 function incrementarRecibo(ultimoRecibo, mesInicial) {
     const prefix = `${mesInicial}${ultimoRecibo.slice(1, 3)}`;  // 'E25', 'F25', etc.
@@ -512,8 +512,66 @@ function incrementarRecibo(ultimoRecibo, mesInicial) {
     return `${prefix}-${nuevoNumero}`;  // Retornar el nuevo recibo
 }
 
+// Mostrar mensaje de confirmación
+// Mostrar mensaje de confirmación
+const mostrarConfirmacionDescarga = () => {
+    const modalHtml = `
+        <div id="modalConfirmacion" class="modal fade" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="modalConfirmacionLabel">
+                            <i class="fas fa-check-circle"></i> Confirmación de Descarga
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tu recibo ha sido descargado correctamente.
+                           <strong>Por favor, no olvides confirmar la descarga con tu vendedor.</strong>
+                        </p>
+                        <p>¿Deseas confirmar de una vez?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnNo" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i> No
+                        </button>
+                        <button id="btnSi" type="button" class="btn btn-success">
+                            <i class="fab fa-whatsapp"></i> Sí
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Insertar el modal en el DOM
+    const body = document.querySelector('body');
+    body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // Mostrar el modal
+    const modalConfirmacion = new bootstrap.Modal(document.getElementById('modalConfirmacion'));
+    modalConfirmacion.show();
+
+    // Configurar acciones de los botones
+    document.getElementById('btnSi').addEventListener('click', () => {
+        const telefonoVendedor = '6647277107';
+        const mensaje = encodeURIComponent('Hola confirmando que ya genere mi Ticket final de mi reservación. Y lo tengo en mis archivos para presentarse el día del tour al abordar la unidad.');
+        const urlWhatsApp = `https://wa.me/${telefonoVendedor}?text=${mensaje}`;
+        window.open(urlWhatsApp, '_blank');
+        modalConfirmacion.hide();
+    });
+
+    document.getElementById('btnNo').addEventListener('click', () => {
+        modalConfirmacion.hide();
+    });
+};
+
+// Descargar presentación como PDF
 // Descargar presentación como PDF
 async function descargarPresentacionComoPDF(reciboNuevo) {
+    // Mostrar el mensaje de carga
+    document.getElementById('mensajeCargando').style.display = 'block'; // Muestra el mensaje de carga
+
     const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';
     const accessToken = await renovarAccessToken();
 
@@ -522,6 +580,7 @@ async function descargarPresentacionComoPDF(reciboNuevo) {
 
     if (!nombreCliente) {
         alert('Por favor selecciona un cliente antes de generar el recibo.');
+        document.getElementById('mensajeCargando').style.display = 'none'; // Ocultar mensaje si no se selecciona cliente
         return;
     }
 
@@ -548,43 +607,116 @@ async function descargarPresentacionComoPDF(reciboNuevo) {
 
     if (!responseUpdate.ok) {
         console.error('Error al actualizar la presentación:', await responseUpdate.json());
+        document.getElementById('mensajeCargando').style.display = 'none'; // Ocultar mensaje si hay error
         return;
     }
 
     console.log('Presentación actualizada con el recibo:', reciboNuevo);
 
-    // Mostrar mensaje de alerta
-    alert(`Tu recibo se ha generado, enseguida empezará la descarga. No olvides compartirlo por WhatsApp a Tijuana Tours`);
-
     // Descargar el archivo como PDF
-    const url = `https://www.googleapis.com/drive/v3/files/${presentationId}/export?mimeType=application/pdf`;
+    const urlDownload = `https://www.googleapis.com/drive/v3/files/${presentationId}/export?mimeType=application/pdf`;
 
-    const responseDownload = await fetch(url, {
+    const responseDownload = await fetch(urlDownload, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
     if (!responseDownload.ok) {
         console.error('Error al descargar el PDF:', await responseDownload.json());
+        document.getElementById('mensajeCargando').style.display = 'none'; // Ocultar mensaje si hay error
         return;
     }
 
     const blob = await responseDownload.blob();
-    const urlBlob = URL.createObjectURL(blob);
+    const fileName = `ReciboTijuanaTour_${reciboNuevo}.pdf`;
 
+    // Subir el PDF generado a Google Drive
+    const publicLink = await subirPDFAGoogleDrive(blob, fileName, accessToken);
+
+    if (!publicLink) {
+        console.error('No se pudo subir el PDF generado a Google Drive.');
+        document.getElementById('mensajeCargando').style.display = 'none'; // Ocultar mensaje si hay error
+        return;
+    }
+
+    // Descargar el archivo localmente para el usuario
+    const urlBlob = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = urlBlob;
-    a.download = `ReciboTijuanaTour_${reciboNuevo}.pdf`;
+    a.download = fileName;
     a.click();
 
-    // Registrar el recibo en Google Sheets
+    // Registrar el recibo en Google Sheets, incluyendo el enlace público al PDF
     try {
-        await registrarRecibo(nombreCliente, reciboNuevo);
-        console.log('Recibo registrado exitosamente en Google Sheets.');
+        await registrarRecibo(nombreCliente, reciboNuevo, publicLink);
+        console.log('Recibo registrado exitosamente en Google Sheets con enlace.');
+
+        // Ocultar el mensaje de carga y mostrar el mensaje de confirmación
+        document.getElementById('mensajeCargando').style.display = 'none'; // Ocultar mensaje de carga
+        mostrarConfirmacionDescarga(); // Mostrar mensaje de confirmación
     } catch (error) {
         console.error('Error al registrar el recibo en Google Sheets:', error);
+        document.getElementById('mensajeCargando').style.display = 'none'; // Ocultar mensaje si hay error
     }
 }
+
+
+
+async function subirPDFAGoogleDrive(blob, fileName, accessToken) {
+    const metadata = {
+        name: fileName, // Nombre del archivo en Google Drive
+        mimeType: 'application/pdf'
+    };
+
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    formData.append('file', blob);
+
+    const urlUpload = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+
+    // Subir el archivo a Google Drive
+    const responseUpload = await fetch(urlUpload, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        },
+        body: formData
+    });
+
+    if (!responseUpload.ok) {
+        console.error('Error al subir el archivo a Google Drive:', await responseUpload.json());
+        return null;
+    }
+
+    const fileData = await responseUpload.json();
+    const fileId = fileData.id;
+
+    // Hacer público el archivo
+    const urlPermission = `https://www.googleapis.com/drive/v3/files/${fileId}/permissions`;
+    const permissionBody = {
+        role: 'reader',
+        type: 'anyone'
+    };
+
+    const responsePermission = await fetch(urlPermission, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(permissionBody)
+    });
+
+    if (!responsePermission.ok) {
+        console.error('Error al hacer público el archivo:', await responsePermission.json());
+        return null;
+    }
+
+    // Retornar el enlace público del archivo
+    return `https://drive.google.com/file/d/${fileId}/view`;
+}
+
+
 
 
 // Función para renovar el token de acceso utilizando el refresh token
