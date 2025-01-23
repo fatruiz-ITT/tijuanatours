@@ -83,6 +83,15 @@
             <h1><i class="fas fa-calendar-check"></i> Registro de Reservación</h1>
             <p class="text-center">Favor de llenar toda la información requerida.</p>
             <form id="formularioReservacion">
+              <!-- Número de teléfono del cliente -->
+              <div class="mb-3">
+                  <label for="telefonoCliente" class="form-label"><i class="fas fa-phone"></i> Teléfono del cliente</label>
+                  <div class="input-group">
+                      <input type="text" class="form-control" id="telefonoCliente" placeholder="Número de teléfono" required>
+                      <button type="button" class="btn btn-secondary" id="validarTelefono">Validar</button>
+                  </div>
+              </div>
+
                 <!-- Nombre del cliente -->
                 <div class="mb-3">
                     <label for="nombreCliente" class="form-label"><i class="fas fa-user"></i> Nombre del cliente</label>
