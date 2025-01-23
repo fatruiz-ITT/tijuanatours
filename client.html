@@ -186,6 +186,29 @@
        background-color: #28a745;
    }
 
+   #mensajeCargando {
+    display: none; /* Por defecto, oculto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#mensajeCargando .spinner-border {
+    margin-left: 10px;
+    border-color: #fff;
+}
+
+
         </style>
 </head>
 <body>
