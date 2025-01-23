@@ -229,9 +229,6 @@ function closeModal() {
     $('#modalTicket').modal('hide'); // Cierra el modal usando jQuery
 }
 
-
-
-
 async function mostrarTabla() {
     const tourSeleccionado = document.getElementById('tourSeleccionado').value;
     const nombreSeleccionado = document.getElementById('nombreSeleccionado').value;
@@ -305,7 +302,6 @@ async function mostrarTabla() {
         }
     }
 }
-
 
 // Función para obtener la descripción del tour
 async function obtenerDescripcionTour(tourSeleccionado, toursSheetName, sheetID, accessToken) {
@@ -459,7 +455,7 @@ async function actualizarPresentacionConDatos(datos) {
 
     if (!responseSlides.ok) {
         console.error('Error al actualizar la presentación:', await responseSlides.json());
-    } 
+    }
 }
 
 // Función para generar un número de recibo único (puedes personalizarlo como prefieras)
@@ -467,7 +463,46 @@ function generarNumeroRecibo() {
     return Math.floor(Math.random() * 1000000);  // Genera un número aleatorio entre 0 y 999999
 }
 
+async function registrarRecibo(nombreCliente, numeroPDF) {
+    const spreadsheetId = '19FNnOKmaNwF9zLCUEPkBiLyRoAdImPe4EPjL23ZJ39g'; // ID de tu hoja de cálculo
+    const accessToken = await renovarAccessToken(); // Obtener el token renovado
+    const sheetName = 'RecibosDescargados'; // Nombre de la pestaña donde deseas almacenar los datos
 
+    // Obtener la fecha actual en formato adecuado
+    const fechaActual = new Date().toLocaleString('es-ES'); // Fecha en formato local
+
+    // Crear el cuerpo de la solicitud para Google Sheets
+    const body = {
+        values: [
+            [
+                nombreCliente,    // Columna A (Nombre del cliente)
+                numeroPDF,        // Columna B (Número de PDF)
+                fechaActual       // Columna C (Fecha de descarga)
+            ]
+        ]
+    };
+
+    try {
+        // Enviar la solicitud a la API de Google Sheets
+        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!A:C:append?valueInputOption=USER_ENTERED`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+
+        if (response.ok) {
+            console.log('Recibo registrado exitosamente.');
+        } else {
+            const errorData = await response.json();
+            console.error('Error al registrar el recibo:', errorData);
+        }
+    } catch (error) {
+        console.error('Error al registrar el recibo:', error);
+    }
+}
 
 // Función para incrementar el número del recibo
 function incrementarRecibo(ultimoRecibo, mesInicial) {
@@ -481,6 +516,14 @@ function incrementarRecibo(ultimoRecibo, mesInicial) {
 async function descargarPresentacionComoPDF(reciboNuevo) {
     const presentationId = '1EG90To9snj1qIGFwyRmRRrNqIdpPUAIarOft8gdeW9I';
     const accessToken = await renovarAccessToken();
+
+    // Obtener el nombre del cliente desde el campo en tu HTML
+    const nombreCliente = document.getElementById('nombreSeleccionado').value;
+
+    if (!nombreCliente) {
+        alert('Por favor selecciona un cliente antes de generar el recibo.');
+        return;
+    }
 
     // Actualizar la presentación con el número del recibo
     const urlSlides = `https://slides.googleapis.com/v1/presentations/${presentationId}:batchUpdate`;
@@ -533,6 +576,14 @@ async function descargarPresentacionComoPDF(reciboNuevo) {
     a.href = urlBlob;
     a.download = `ReciboTijuanaTour_${reciboNuevo}.pdf`;
     a.click();
+
+    // Registrar el recibo en Google Sheets
+    try {
+        await registrarRecibo(nombreCliente, reciboNuevo);
+        console.log('Recibo registrado exitosamente en Google Sheets.');
+    } catch (error) {
+        console.error('Error al registrar el recibo en Google Sheets:', error);
+    }
 }
 
 
