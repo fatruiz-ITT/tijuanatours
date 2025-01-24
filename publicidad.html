@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tijuana Tours - Publicación Simplificada</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: gray;
+        }
+        .btn-selection {
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .btn-selection img {
+            height: 30px;
+            margin-right: 10px;
+        }
+        .card-custom {
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 18px;
+        }
+        .form-control {
+            font-size: 14px;
+        }
+        .card-deck {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .card-deck .card {
+            flex: 0 1 48%; /* 2 cards per row, each taking 48% of width */
+            margin-bottom: 10px;
+        }
+        .form-row input {
+            font-size: 14px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="header">
+            <h1>Creador de Publicidad - Tijuana Tours</h1>
+        </div>
+
+        <div id="tour-selection">
+            <h4>¿Qué tour crearás publicidad?</h4>
+            <div class="card-deck">
+                <div class="card mb-3 card-custom">
+                    <div class="card-body">
+                        <button type="button" class="btn btn-outline-primary btn-selection" onclick="showForm('regular')">
+                            <i class="bi bi-map" style="font-size: 20px;"></i> Fuera de la Ruta del Vino
+                        </button>
+                    </div>
+                </div>
+                <div class="card mb-3 card-custom">
+                    <div class="card-body">
+                        <button type="button" class="btn btn-outline-secondary btn-selection" onclick="showForm('wine')">
+                            <i class="bi bi-glass" style="font-size: 20px;"></i> Ruta del Vino
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div id="ad-form1" class="card mb-1 card-custom" style="display: none;">
+                <div id="ad-form2" class="card-body" style="display: none;">
+        <form id="ad-form" style="display: none;">
+            <div class="mb-3">
+                <label for="tour" class="form-label">Nombre del Tour</label>
+                <input type="text" id="tour" class="form-control" placeholder="Ejemplo: Año Nuevo en Peñasco">
+            </div>
+
+            <div class="mb-3">
+                <label for="dates" class="form-label">Fechas Disponibles</label>
+                <input type="text" id="dates" class="form-control" placeholder="Ejemplo: 31 de Diciembre al 2 de Enero">
+            </div>
+
+            <div class="mb-3" id="hotel-field">
+                <label for="hotel" class="form-label">Nombre del Hotel</label>
+                <input type="text" id="hotel" class="form-control" placeholder="Ejemplo: Hotel Peñasco del Sol">
+            </div>
+
+            <div class="mb-3">
+                <label for="activities" class="form-label">Actividades y Servicios Incluidos</label>
+                <textarea id="activities" class="form-control" rows="5" placeholder="Ejemplo: Fiesta y baile con DJ, Cena de 3 tiempos, Copa de vino espumoso, etc."></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="additional-details" class="form-label">Detalles Adicionales</label>
+                <textarea id="additional-details" class="form-control" rows="4" placeholder="Ejemplo: Check-out a las 2:00 PM, acceso a la playa, albercas climatizadas, etc."></textarea>
+            </div>
+
+            <button type="button" id="generate-ad" class="btn btn-primary">Generar Publicidad</button>
+            <button type="button" class="btn btn-danger" onclick="goBackToMenu()">Regresar al Menú</button>
+        </form>
+
+        <div id="publish-options" class="mt-5" style="display: none;">
+            <h5>Opciones de Publicación</h5>
+            <p>Copia el texto generado abajo y publícalo en tu página de Facebook:</p>
+            <textarea id="final-ad" class="form-control" rows="10" readonly></textarea>
+            <button class="btn btn-success mt-3" onclick="copyToClipboard()">Copiar al Portapapeles</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+    <div class="footer">
+        <p>Tijuana Tours - Oficina: 664-727-7107 | WhatsApp: 664-440-2478 | Correo: tijuanatoursmx@gmail.com</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
+    <script>
+        function copyToClipboard() {
+            const textArea = document.getElementById('final-ad');
+            textArea.select();
+            document.execCommand('copy');
+            alert('Texto copiado al portapapeles');
+        }
+
+        function showForm(type) {
+            document.getElementById('tour-selection').style.display = 'none';
+            document.getElementById('ad-form').style.display = 'block';
+            document.getElementById('ad-form1').style.display = 'block';
+            document.getElementById('ad-form2').style.display = 'block';
+            const hotelField = document.getElementById('hotel-field');
+
+            if (type === 'wine') {
+                hotelField.style.display = 'none';
+                document.getElementById('generate-ad').dataset.type = 'wine';
+            } else {
+                hotelField.style.display = 'block';
+                document.getElementById('generate-ad').dataset.type = 'regular';
+            }
+        }
+
+        function goBackToMenu() {
+            document.getElementById('ad-form').style.display = 'none';
+            document.getElementById('ad-form1').style.display = 'none';
+            document.getElementById('ad-form2').style.display = 'none';
+            document.getElementById('publish-options').style.display = 'none';
+            document.getElementById('tour-selection').style.display = 'block';
+        }
+
+        document.getElementById('generate-ad').addEventListener('click', function() {
+            const type = this.dataset.type;
+            const tour = document.getElementById('tour').value;
+            const dates = document.getElementById('dates').value;
+            const hotel = type === 'regular' ? document.getElementById('hotel').value : '';
+            const activities = document.getElementById('activities').value;
+            const additionalDetails = document.getElementById('additional-details').value;
+
+            const paymentInfo = `💳 Puedes realizar pagos de las siguientes formas:
+💸 Transferencias desde Oxxo o SPEI
+🏦 Hey Banco
+🏦 Banorte
+🏦 Coppel
+🏦 Banco Americano (DLLS) 💵
+🤑 PayPal 📧`;
+
+            const pricingDetails = `📌 Pregunta por las ofertas, envíanos WhatsApp para saber de ellas.`;
+
+            const formattedActivities = activities.split('\n').map(a => a.toLowerCase().includes('visita') ? `👉 ${a}` : `✅ ${a}`).join('\n');
+            const formattedDetails = additionalDetails.split('\n').map(d => `🔸 ${d}`).join('\n');
+
+            const slogan = type === 'wine'
+                ? `Por que te mereces más de una copa de vinito, vamos a la Ruta del Vino con Tijuana Tours.`
+                : `Dejanos consentirte, prepárate para disfrutar unas vacaciones inolvidables, gente bonita, con Tijuana Tours.`;
+
+            const adPreview = `
+                ✨ Tour ${tour} ✨\n\n${slogan}\n\n📅 Fechas: ${dates}\n${type === 'regular' ? `🏨 Hotel: ${hotel}\n` : ''}\n🎉 Actividades Incluidas:\n${formattedActivities}\n\n⭐ Detalles Adicionales:\n${formattedDetails}\n\n💵 Precios:\n${pricingDetails}\n\n📌 Información de Pago:\n${paymentInfo}\n\n📞 Oficina: 664-727-7107 | 📱 WhatsApp: 664-440-2478\n📧 Correo: tijuanatoursmx@gmail.com\n\n¡Reserva ahora y vive una experiencia inolvidable con Tijuana Tours!`;
+
+            document.getElementById('final-ad').value = adPreview;
+            document.getElementById('publish-options').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
