@@ -143,9 +143,16 @@ function mostrarDatosBanco() {
 // Función para copiar el texto al portapapeles
 function copiarTexto(texto) {
     navigator.clipboard.writeText(texto).then(() => {
-        alert('Texto copiado al portapapeles');
+        alert("Texto copiado: " + texto);
+    }).catch(err => {
+        console.error("Error al copiar: ", err);
     });
+
+    // Evitar que el modal se cierre
+    event.preventDefault();
+    event.stopPropagation();
 }
+
 
 // Función para enviar el recibo por WhatsApp
 function enviarRecibo() {
