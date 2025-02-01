@@ -65,6 +65,26 @@
             font-size: 14px;
             width: 100%;
         }
+        canvas {
+            border: 10px solid #007bff; /* Marco azul */
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        /* Esto asegura que el contenedor de los formularios y el banner se acomoden lado a lado */
+.d-flex {
+    display: flex;
+    align-items: flex-start; /* Alinea los elementos al inicio */
+}
+
+/* Esto asegura que el banner ocupe todo el espacio disponible, mientras que el formulario ocupe el espacio restante */
+#bannerfoto {
+    flex: 1; /* Hace que el banner ocupe el 50% del espacio del contenedor */
+    margin-right: 20px; /* Espacio entre el banner y el formulario */
+}
+
     </style>
 </head>
 <body>
@@ -130,6 +150,24 @@
             <textarea id="final-ad" class="form-control" rows="10" readonly></textarea>
             <button class="btn btn-success mt-3" onclick="copyToClipboard()">Copiar al Portapapeles</button>
         </div>
+
+        <div id="bannerfoto" class="container" style="display: none;">
+          <p><p>Ahora Genera El Banner (Fotos)</p>
+
+         <!-- Campo de texto para el tema -->
+         <input type="text" id="themeInput" class="form-control mb-2" placeholder="Escribe un tema, por ejemplo: playa, montañas, etc." />
+
+         <!-- Botón para generar banner -->
+         <button type="button" class="btn btn-info" id="generateButton">Generar Banner</button><p>
+
+         <!-- Lienzo para el banner -->
+         <div id="contenedorfoto" class="card mb4 card-custom" style="display: none;">
+             <canvas id="bannerCanvas" width="1000" height="630"></canvas>
+         </div><p>
+         <!-- Botón para descargar el banner -->
+         <p><button  type="button" class="btn btn-success" id="downloadButton">Descargar Banner</button>
+     </div>
+
     </div>
     </div>
 </div>
@@ -145,6 +183,7 @@
             textArea.select();
             document.execCommand('copy');
             alert('Texto copiado al portapapeles');
+            document.getElementById('bannerfoto').style.display = 'block';
         }
 
         function showForm(type) {
@@ -152,6 +191,7 @@
             document.getElementById('ad-form').style.display = 'block';
             document.getElementById('ad-form1').style.display = 'block';
             document.getElementById('ad-form2').style.display = 'block';
+
             const hotelField = document.getElementById('hotel-field');
 
             if (type === 'wine') {
@@ -168,6 +208,7 @@
             document.getElementById('ad-form1').style.display = 'none';
             document.getElementById('ad-form2').style.display = 'none';
             document.getElementById('publish-options').style.display = 'none';
+            document.getElementById('bannerfoto').style.display = 'none';
             document.getElementById('tour-selection').style.display = 'block';
         }
 
@@ -196,12 +237,139 @@
                 ? `Por que te mereces más de una copa de vinito, vamos a la Ruta del Vino con Tijuana Tours.`
                 : `Dejanos consentirte, prepárate para disfrutar unas vacaciones inolvidables, gente bonita, con Tijuana Tours.`;
 
-            const adPreview = `
-                ✨ Tour ${tour} ✨\n\n${slogan}\n\n📅 Fechas: ${dates}\n${type === 'regular' ? `🏨 Hotel: ${hotel}\n` : ''}\n🎉 Actividades Incluidas:\n${formattedActivities}\n\n⭐ Detalles Adicionales:\n${formattedDetails}\n\n💵 Precios:\n${pricingDetails}\n\n📌 Información de Pago:\n${paymentInfo}\n\n📞 Oficina: 664-727-7107 | 📱 WhatsApp: 664-440-2478\n📧 Correo: tijuanatoursmx@gmail.com\n\n¡Reserva ahora y vive una experiencia inolvidable con Tijuana Tours!`;
+            const adPreview =`✨ Tour ${tour} ✨\n\n${slogan}\n\n📅 Fechas: ${dates}\n${type === 'regular' ? `🏨 Hotel: ${hotel}\n` : ''}\n🎉 Actividades Incluidas:\n${formattedActivities}\n\n⭐ Detalles Adicionales:\n${formattedDetails}\n\n💵 Precios:\n${pricingDetails}\n\n📌 Información de Pago:\n${paymentInfo}\n\n📞 Oficina y WhatsApp Principal📱: 664-727-7107 \n 📱 WhatsApp (Mensajeria Solamente): 664-440-2478\n📧 Correo: tijuanatoursmx@gmail.com\n\n¡Reserva ahora y vive una experiencia inolvidable con Tijuana Tours!`;
 
             document.getElementById('final-ad').value = adPreview;
             document.getElementById('publish-options').style.display = 'block';
         });
+
+/////////////////////////////////////// CODIGO PARA EL BANNER FOTO /////////////////////////////////////////
+const canvas = document.getElementById('bannerCanvas');
+const ctx = canvas.getContext('2d');
+const themeInput = document.getElementById('themeInput');
+const generateButton = document.getElementById('generateButton');
+const downloadButton = document.getElementById('downloadButton');
+
+const logo = new Image();
+logo.src = "https://i.ibb.co/HChTyqN/OIP.jpg";
+logo.crossOrigin = "anonymous"; // Permitir CORS anónimo
+let logoLoaded = false;
+
+logo.onload = () => {
+    logoLoaded = true;
+};
+
+function drawBanner(photos) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#e9f4f9';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const photoWidth = canvas.width / 4;
+    const photoHeight = canvas.height;
+
+    let imagesLoaded = 0;
+
+    photos.forEach((photo, index) => {
+        const x = index * photoWidth;
+        const img = new Image();
+        img.crossOrigin = "anonymous"; // Permitir imágenes externas
+        img.src = photo;
+
+        img.onload = () => {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(x + 10, 10, photoWidth - 20, photoHeight - 20);
+            ctx.clip();
+            ctx.drawImage(img, x, 0, photoWidth, photoHeight);
+            ctx.restore();
+
+            imagesLoaded++;
+            if (imagesLoaded === photos.length) {
+                drawIcons();
+            }
+        };
+    });
+}
+
+function drawIcons() {
+    const travelIcons = [
+        { icon: 'airplane-fill', x: canvas.width * 0.10, y: 50 },
+        { icon: 'globe', x: canvas.width * 0.35, y: 50 },
+        { icon: 'suitcase-lg', x: canvas.width * 0.60, y: 50 },
+        { icon: 'bus-front-fill', x: canvas.width * 0.85, y: 50 }
+    ];
+
+    let iconsLoaded = 0;
+    travelIcons.forEach(icon => {
+        const img = new Image();
+        img.crossOrigin = "anonymous"; // Evita problemas de CORS
+        img.src = `https://cdn.jsdelivr.net/npm/bootstrap-icons/icons/${icon.icon}.svg`;
+
+        img.onload = () => {
+            ctx.drawImage(img, icon.x, icon.y, 50, 50);
+            iconsLoaded++;
+
+            if (iconsLoaded === travelIcons.length) {
+                drawLogo();
+            }
+        };
+    });
+}
+
+function drawLogo() {
+    if (logoLoaded) {
+        const logoSize = 100;
+        const x = (canvas.width - logoSize) / 2;
+        const y = (canvas.height - logoSize) / 2;
+        ctx.drawImage(logo, x, y, logoSize, logoSize);
+        downloadButton.disabled = false; // Habilita la descarga cuando todo está listo
+    } else {
+        setTimeout(drawLogo, 100);
+    }
+}
+
+function fetchPhotos(theme) {
+    const accessKey = 'SSO2kaf2-v9cQ3qWdfh1vCw6EXcIvZ4l3SoL7fxuT6A';
+    const apiUrl = `https://api.unsplash.com/photos/random?query=${theme}&count=4&client_id=${accessKey}`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const photos = data.map(item => item.urls.regular);
+            drawBanner(photos);
+        })
+        .catch(error => {
+            console.error('Error fetching photos:', error);
+            alert('No se pudieron cargar las fotos. Intenta con otro tema.');
+        });
+}
+
+generateButton.addEventListener('click', () => {
+    document.getElementById('contenedorfoto').style.display = 'block';
+    const theme = themeInput.value.trim();
+    if (theme) {
+        fetchPhotos(theme);
+        downloadButton.disabled = true; // Bloquea descarga hasta que todo esté listo
+    } else {
+        alert('Por favor, ingresa un tema para buscar las imágenes.');
+    }
+});
+
+downloadButton.addEventListener('click', () => {
+    setTimeout(() => {
+        try {
+            const dataUrl = canvas.toDataURL('image/png'); // Aquí puede dar error si hay problemas de CORS
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = 'banner_facebook.png';
+            a.click();
+        } catch (error) {
+            console.error("Error al descargar:", error);
+            alert("No se puede descargar la imagen debido a restricciones de seguridad.");
+        }
+    }, 500);
+});
+
     </script>
 </body>
 </html>
