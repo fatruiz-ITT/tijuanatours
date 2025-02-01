@@ -109,7 +109,11 @@
       const telefonoCliente = document.getElementById('telefonoCliente').value; // Nuevo dato
       const tourSeleccionado = document.getElementById('tourSeleccionado').value;
       const fechaTour = new Date(document.getElementById('fechaTour').value);
+      fechaTour.setDate(fechaTour.getDate() + 1); // Agregar un día
       const fechaFormateada = `${fechaTour.getDate()} de ${fechaTour.toLocaleString('es-ES', { month: 'long' })} de ${fechaTour.getFullYear()}`;
+      console.log(fechaFormateada);
+
+
       const abono = document.getElementById('abono').checked ? 'Abono' : 'Liquidado';
       const cantidadReserva = document.getElementById('cantidadReserva').value;
       const cantidadAsientos = document.getElementById('cantidadAsientos').value;
