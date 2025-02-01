@@ -165,7 +165,7 @@
              <canvas id="bannerCanvas" width="1000" height="630"></canvas>
          </div><p>
          <!-- Botón para descargar el banner -->
-         <p><button  type="button" class="btn btn-success" id="downloadButton">Descargar Banner</button>
+         <p><button  type="button" class="btn btn-success" id="downloadButton" style="display: none;">Descargar Banner</button>
      </div>
 
     </div>
@@ -346,6 +346,7 @@ function fetchPhotos(theme) {
 
 generateButton.addEventListener('click', () => {
     document.getElementById('contenedorfoto').style.display = 'block';
+    document.getElementById('downloadButton').style.display = 'block';
     const theme = themeInput.value.trim();
     if (theme) {
         fetchPhotos(theme);
