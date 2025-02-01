@@ -331,6 +331,7 @@ document.getElementById('validarTelefono').addEventListener('click', cargarDatos
 
 
 // Función para mostrar la disponibilidad de asientos
+// Función para mostrar la disponibilidad de asientos
 async function validarDisponibilidad() {
     const tourSeleccionado = document.getElementById('tourDisponibilidad').value;
     if (!tourSeleccionado) {
@@ -354,34 +355,34 @@ async function validarDisponibilidad() {
         const filas = data.values;
         let totalAsientos = 0;
         const reservas = {};
-        const clientesContados = new Set();  // Usamos un Set para asegurarnos de contar solo una vez a cada cliente
+        const clientesContados = new Set();
 
         filas.forEach((fila, index) => {
             if (index > 0 && fila[1] === tourSeleccionado) { // Columna B: Nombre del tour
                 const nombreCliente = fila[0]; // Columna A: Nombre del cliente
                 const cantidadAsientos = parseInt(fila[7]) || 0; // Columna H: Cantidad de asientos reservados
+                const fecha = fila[2]; // Columna C: Fecha
 
-                // Solo contar una vez por cliente
                 if (!clientesContados.has(nombreCliente)) {
-                    reservas[nombreCliente] = cantidadAsientos;
+                    reservas[nombreCliente] = {
+                        asientos: cantidadAsientos,
+                        fecha: fecha
+                    };
                     clientesContados.add(nombreCliente);
                 }
             }
         });
 
-        // Calcular el total de asientos
-        totalAsientos = Object.values(reservas).reduce((total, cantidad) => total + cantidad, 0);
+        totalAsientos = Object.values(reservas).reduce((total, reserva) => total + reserva.asientos, 0);
 
-        // Mostrar total de asientos
         document.getElementById('totalAsientos').style.display = 'block';
         document.getElementById('cantidadTotal').textContent = totalAsientos;
 
-        // Mostrar la tabla
         const tbody = document.getElementById('tablaReservasBody');
         tbody.innerHTML = '';
         for (const nombreCliente in reservas) {
             const row = document.createElement('tr');
-            row.innerHTML = `<td>${nombreCliente}</td><td>${reservas[nombreCliente]}</td>`;
+            row.innerHTML = `<td>${nombreCliente}</td><td>${reservas[nombreCliente].asientos}</td><td>${reservas[nombreCliente].fecha}</td>`;
             tbody.appendChild(row);
         }
         document.getElementById('tablaReservas').style.display = 'table';
@@ -389,6 +390,7 @@ async function validarDisponibilidad() {
         console.error('Error al obtener datos:', await response.text());
     }
 }
+
 
 
 // Evento para cargar tours en el modal
