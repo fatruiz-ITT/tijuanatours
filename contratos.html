@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Contrato Profesional - Tijuana Tours</title>
+
+<style>
+    body {
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        background: #eef2f7;
+        margin: 0;
+        padding: 30px;
+    }
+
+    .container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 30px; /* antes 50px */
+    border-radius: 10px;
+    box-shadow: none; /* importante para PDF */
+}
+
+    /* LOGO */
+    .logo {
+        width: 160px;
+        height: 80px;
+        object-fit: contain;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 4px solid #0a3d62;
+        padding-bottom: 15px;
+        margin-bottom: 35px;
+    }
+
+    .title {
+        font-size: 30px;
+        font-weight: 800;
+        color: #0a3d62;
+    }
+
+    .subtitle {
+        font-size: 13px;
+        color: #555;
+    }
+
+    .right-header input {
+        border: none;
+        border-bottom: 1px solid #333;
+        margin-top: 5px;
+    }
+
+    h3 {
+        color: #0a3d62;
+        margin-top: 30px;
+    }
+
+    input {
+    border: none;
+    border-bottom: 1.5px solid #000;
+    outline: none;
+    font-size: 14px;
+    width: 250px;   /* 👈 aquí controlas el tamaño */
+} 
+    .line {
+        margin: 5px 0;
+    }
+
+    .box {
+        background: #f5f8fc;
+        border-left: 5px solid #0a3d62;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .clauses {
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .clauses p {
+        margin-bottom: 10px;
+    }
+
+    .signatures {
+        margin-top: 70px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sign {
+        width: 40%;
+        text-align: center;
+    }
+
+    .line-sign {
+        border-top: 1px solid black;
+        margin-top: 60px;
+        padding-top: 5px;
+    }
+
+    button {
+        margin-top: 25px;
+        background: #0a3d62;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    @media print {
+        button { display: none; }
+        body { background: white; }
+        .container { box-shadow: none; }
+    }
+    @page {
+    size: A4;
+    margin: 4mm;
+}
+
+@media print {
+    body {
+        zoom: 0.9; /* ajusta entre 0.85 y 0.95 si no cabe */
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <!-- CAMBIA ESTE LINK POR TU LOGO -->
+        <img src="https://i.ibb.co/Pzm98S7g/499871133-1116059227215315-5067798107355192006-n.jpg" class="logo">
+
+        <div class="right-header">
+            No: <input type="text"><br>
+            Fecha: <input type="text">
+        </div>
+    </div>
+
+    <div class="title">CONTRATO DE SERVICIOS</div>
+    <div class="subtitle">Servicios de Tours Personalizados</div>
+
+    <div class="line">
+        Cliente: <input type="text" style="width:300px">
+    </div>
+
+    <div class="line">
+        Servicio: <input type="text">
+    </div>
+
+    <div class="line">
+        Salida: <input type="text"> &nbsp;&nbsp;
+        Regreso: <input type="text">
+    </div>
+
+    <div class="line">
+        Destino: <input type="text">
+    </div>
+
+    <div class="line">
+        Autobuses: <input type="text">
+    </div>
+
+    <div class="line">
+        Total: $ <input type="text"> ( <input type="text" style="width:250px"> )
+    </div>
+
+    <div class="box">
+        El prestador garantiza un servicio en condiciones óptimas, destinado exclusivamente al traslado del cliente conforme al servicio contratado.
+    </div>
+
+    <h3>Cláusulas</h3>
+
+    <div class="clauses">
+
+    <p>1. El cliente deberá cubrir un anticipo para confirmar la reservación, mismo que no será reembolsable en caso de cancelación.</p>
+
+    <p>2. El servicio deberá estar liquidado en su totalidad antes de la salida.</p>
+
+    <p>3. El cliente será responsable por cualquier daño ocasionado <strong>dentro de la unidad</strong>, incluyendo interiores, asientos, ventanas o cualquier componente del vehículo, comprometiéndose a cubrir los costos de reparación.</p>
+
+    <p>4. Se establece un tiempo de tolerancia limitado para la salida. En caso de retraso, podrán aplicarse cargos adicionales o cancelación del servicio sin reembols ya que el servicio contratado tiene una duración de <strong>12 horas</strong>. Cualquier tiempo adicional será considerado como hora extra y tendrá un costo adicional.</p>
+
+    <p>5. El prestador de servicio no será responsable por retrasos, modificaciones o cancelaciones derivadas de causas externas tales como tráfico, condiciones climáticas o fallas de logisticas de cavas.</p>
+
+    <p>6. Queda estrictamente prohibido introducir <strong>químicos, drogas o armas de fuego</strong> dentro de la unidad.</p>
+
+    <p>7. El prestador del servicio se reserva el derecho de dar por terminado el servicio sin reembolso en caso de conductas riesgosas o inapropiadas por parte del cliente o sus acompañantes, tales como: exceso en el consumo de bebidas alcohólicas y provoque agresiones verbales, faltas de respeto al personal o cualquier comportamiento que ponga en riesgo la seguridad del servicio.</p>
+
+</div>
+
+    <div class="signatures">
+        <div class="sign">
+            <div class="line-sign">CLIENTE</div>
+        </div>
+
+        <div class="sign">
+            <div class="line-sign">PRESTADOR DEL SERVICIO</div>
+        </div>
+    </div>
+
+    <button onclick="window.print()">Exportar a PDF</button>
+
+</div>
+
+</body>
+</html>
